@@ -92,7 +92,7 @@ class Game {
   bool ended;
   Ball ball;
 
-  void loop();
+  void update();
   void add_player(Player);
   void remove_player(ID/IP);
   void start();
