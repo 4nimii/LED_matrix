@@ -98,5 +98,10 @@ class Game {
   void start();
 }
 
-uint16_t[n][m] render_matrix(Game);
+typedef struct Image {
+  vector<vector<uint16_m>> data
+  Image(n, m);
+} 
+
+Image render_matrix(Game);
 ```
