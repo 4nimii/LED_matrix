@@ -1,4 +1,4 @@
-# Display
+# Display
 
 The displaying part display on hardware the pixel matrix created by the rendering part given the core game data.
 
