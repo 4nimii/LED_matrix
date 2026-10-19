@@ -22,3 +22,23 @@ Work on how to manage the core gae mechanic, like player movement, player managm
 ### Display
 
 Work on how to display the game on (a/any ?) screen.
+
+Example pseudo code game loop could be (without network/player interaction update):
+
+```cpp
+void main() {
+  Image *screen(128, 64);
+  Game core();
+  Player p1();
+  Player p2();
+  core.add_player(p1);
+  core.add_player(p2);
+  Display d("screen 1");
+  core.start()
+  while(1) {
+    core.update();
+    render(screen);
+    d.display(screen);
+  }
+}
+```
