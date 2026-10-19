@@ -1,6 +1,6 @@
 # Game core
 
-The game core is the layer with manage each players, win and loss conditions and start/end states. The basic rules of pong are:
+The game core is the layer with manage each players, win and loss conditions and start/end states. The basic rules of Pong are:
 - If a player send the ball to the goal of a opponent, its score is increased by one
 - If the ball touch the goal, all the players and the ball position are reset to their starting position. 
 
@@ -58,7 +58,7 @@ The game can:
 - Control it's start/end state
 - Manage scores
 
-## Rendering
+## Rendering
 
 The rendering part take the game core part and create a pixel matrix from it.
 
@@ -66,3 +66,37 @@ It should:
 - Take abstract player's and ball's position and convert them to pixel values
 - Display the ball and player in the matrix at the correct position
 - Output a NxM matrix of values representing the current state of the game
+- Display a start/end screen
+
+## Pseudo-code e.g.
+
+```cpp
+class Player {
+  std::string name;
+  std::string ip/id;
+  int[2] position;
+  uint score;
+
+  void update_position();
+  void update_name();
+}
+
+class Ball {
+  int[2] position;
+  float[2] direction;
+}
+
+class Game {
+  vector<Player> players;
+  bool started;
+  bool ended;
+  Ball ball;
+
+  void loop();
+  void add_player(Player);
+  void remove_player(ID/IP);
+  void start();
+}
+
+uint16_t[n][m] render_matrix(Game);
+```
