@@ -1,6 +1,6 @@
 # Game core
 
-The game core is the layer with manage each players, win and loss conditions and start/end states. The basic rules of Pong are:
+The game core is the layer with manage each players. The basic rules of Pong are:
 - If a player send the ball to the goal of a opponent, its score is increased by one
 - If the ball touch the goal, all the players and the ball position are reset to their starting position. 
 
@@ -12,8 +12,6 @@ It should handle:
 - Player joining and leaving
 - Player movement
 - Ball movement
-- Win/loss
-- Start/end
 
 ### Player
 
@@ -55,7 +53,6 @@ The game can:
 - Update the position of the ball and players
 - Delete a player dynamically
 - Prevent player from joining after game start
-- Control it's start/end state
 - Manage scores
 
 ## Rendering
@@ -66,7 +63,6 @@ It should:
 - Take abstract player's and ball's position and convert them to pixel values
 - Display the ball and player in the matrix at the correct position
 - Output a NxM matrix of values representing the current state of the game
-- Display a start/end screen
 
 ## Pseudo-code e.g.
 
