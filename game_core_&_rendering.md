@@ -84,8 +84,6 @@ class Ball {
 
 class Game {
   vector<Player> players;
-  bool started;
-  bool ended;
   Ball ball;
 
   void update();
