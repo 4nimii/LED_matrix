@@ -1,3 +1,4 @@
+
 #include "MainMenu.hpp"
 
 MainMenu::MainMenu(std::vector<Game*> games) {
@@ -123,7 +124,7 @@ int MainMenu::mostVotedGame() {
 
     }
 
-    return max;
+    return max - 1;
 
 }
 
@@ -146,7 +147,7 @@ bool MainMenu::update() {
     }
 
     // update the running game
-    if ( current_game < 0 )
+    if ( current_game >= 0 )
         this->games.at(current_game)->update();
 
     return true;
@@ -161,10 +162,10 @@ bool MainMenu::isRunning() {
 
 bool MainMenu::render(Image* i) {
 
-    if ( current_game < 0 )
+    if ( current_game >= 0 )
         this->games.at(current_game)->render(i);
     else
-        void; // Render main menu, later
+        i->displayRect(0.5, 0.5, 0.3, 0.3);
 
     return true;
 
