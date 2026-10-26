@@ -16,6 +16,8 @@ Image::Image(int size_x, int size_y) {
 
     this->drawing_color = 255;
 
+    this->clear();
+
 }
 
 bool Image::setPixelAt(int x, int y) {
@@ -23,7 +25,7 @@ bool Image::setPixelAt(int x, int y) {
     if ( x < 0 || x >= this->size_x) return false;
     if ( y < 0 || y >= this->size_y) return false;
 
-    this->pixels[x * y] = this->drawing_color;
+    this->pixels[x + y * size_x] = this->drawing_color;
 
     return true;
 
@@ -34,7 +36,7 @@ uint8_t Image::getPixelAt(int x, int y) {
     if ( x < 0 || x >= this->size_x) return 0;
     if ( y < 0 || y >= this->size_y) return 0;
 
-    return this->pixels[x * y];
+    return this->pixels[x + y * size_x];
 
 }
 
