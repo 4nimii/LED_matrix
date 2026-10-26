@@ -27,3 +27,20 @@ bool Image::clear() {
     return true;
 
 }
+
+bool Image::displayGlyph(char glyph, float x, float y) {
+    return true;
+}
+
+
+bool Image::displayText(std::string text, float x, float y) {
+    return true;
+}
+
+bool Image::displayRect(float x, float y, float size_x, float size_y) {
+    return true;
+}
+
+bool Image::displayCircle(float x, float y, float radius) {
+    return true;
+}

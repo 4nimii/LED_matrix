@@ -5,6 +5,7 @@
 #include "games/Pong.hpp"
 #include "display/Image.hpp"
 #include "display/Display.hpp"
+#include "display/drivers/Stdout.hpp"
 
 int main(int argc, char** argv) {
 
@@ -12,14 +13,18 @@ int main(int argc, char** argv) {
     games.push_back( (Game*)new Pong() );
 
     MainMenu* menu = new MainMenu(games);
+
+    // select correct size with argv, argc
     Image* screen = new Image(128, 128);
-    // Display* diplay, select correct driver with argv, argc
+
+    // select correct driver with argv, argc
+    Display* display = new Stdout();
 
     while (true) {
 
         menu->update();
         menu->render(screen);
-        // display render
+        display->display(screen);
 
     }
 
