@@ -165,7 +165,7 @@ bool MainMenu::render(Image* i) {
     if ( current_game >= 0 )
         this->games.at(current_game)->render(i);
     else
-        i->displayRect(0.5, 0.5, 0.3, 0.3);
+        i->displayCircle(0.2, 0.2, 0.3);
 
     return true;
 

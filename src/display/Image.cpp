@@ -82,13 +82,11 @@ bool Image::displayRect(float vw, float vh, float weight, float height) {
     int pixel_size_x = (int)(weight / this->view_unit_x);
     int pixel_size_y = (int)(height / this->view_unit_y);
 
-    for (;pixel_size_y >= 0; --pixel_size_y) {
+    for (int l = 0; l < pixel_size_y; l++) {
 
-        for(;pixel_size_x >= 0; --pixel_size_x) {
+        for(int k = 0; k < pixel_size_x; k++) {
 
-            printf("%i, %i\n", pixel_size_x, pixel_size_y);
-
-            setPixelAt(pixel_x + pixel_size_x, pixel_y + pixel_size_y);
+            setPixelAt(pixel_x + l, pixel_y + k);
 
         }
 
@@ -104,9 +102,9 @@ bool Image::displayCircle(float vw, float vh, float radius) {
     float pixel_size_radius = (radius / this->view_unit_x);
     float pixel_diameter = pixel_size_radius * 2;
 
-    for (float l = 0; l < pixel_diameter; ++l) {
+    for (float l = 0; l < pixel_diameter; l++) {
 
-        for(float k = 0; k < pixel_diameter; ++k) {
+        for(float k = 0; k < pixel_diameter; k++) {
 
             // If pixel within the circle...
             if ( sqrt( pow(pixel_size_radius - l, 2) + pow(pixel_size_radius - k, 2) ) < pixel_size_radius ) {
