@@ -1,7 +1,6 @@
-
 #include "Player.hpp"
 
-Plaer::player(std::string name, std::string id) {
+Player::Player(std::string name, std::string id) {
 
     this->name = name;
     this->name = id;

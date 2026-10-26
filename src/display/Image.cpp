@@ -1,10 +1,10 @@
-#include "image.hpp"
+#include "Image.hpp"
 
 Image::Image(int size_x, int size_y) {
 
     this->size_x = size_x;
     this->size_y = size_y;
-    this->pixels = new int[size_x * size_y];
+    this->pixels = std::vector<uint8_t>(size_x * size_y);
 
 }
 
@@ -22,7 +22,7 @@ bool Image::setPixelAt(int x, int y, uint8_t color) {
 bool Image::clear() {
 
     for (int i = 0; i < this->size_x * this->size_y; ++i)
-        this->pixels[x * y] = 0;
+        this->pixels.at(i) = 0;
 
     return true;
 

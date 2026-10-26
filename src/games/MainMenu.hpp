@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 
 #include "Game.hpp"
@@ -22,12 +23,12 @@ class MainMenu: public Game {
     public:
 
         MainMenu(std::vector<Game*> games);
-        override bool addPlayer(Player* );
-        override bool removePlayer(Player* );
-        override bool updatePlayer(Player* , std::vector<int> );
-        override bool isRunning();
-        override bool render(Image[]* );
-        override bool update();
-        override bool reset();
+        bool addPlayer(Player* ) override;
+        bool removePlayer(Player* ) override;
+        bool updatePlayer(Player* , std::vector<int> ) override;
+        bool isRunning() override;
+        bool render(Image* i) override;
+        bool update() override;
+        bool reset() override;
 
-}
+};

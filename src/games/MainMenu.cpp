@@ -11,8 +11,8 @@ bool MainMenu::addPlayer(Player* p) {
     // The player is already here ?
     if ( getPlayerIndex(p) != -1 ) return false;
 
-    this->players.push(p);
-    this->voted_for.push(-1);
+    this->players.push_back(p);
+    this->voted_for.push_back(-1);
 
     // Also add the player to the running game...
     if ( current_game >= 0 ) {
@@ -27,7 +27,7 @@ bool MainMenu::addPlayer(Player* p) {
 
 int MainMenu::getPlayerIndex(Player* p) {
 
-    for (int i = 0; i < this->players.length; ++i) {
+    for (int i = 0; i < this->players.size(); ++i) {
 
         // Found the player...
         if (this->players.at(i)->getID() == p->getID()) {
@@ -68,16 +68,16 @@ bool MainMenu::updatePlayer(Player* p, std::vector<int> v) {
 
     int player_index = getPlayerIndex(p);
 
-    if (player_index == -1) return false
+    if (player_index == -1) return false;
 
     // We need at least 2 parameters
-    if ( v.length >= 2 ) {
+    if ( v.size() >= 2 ) {
 
         // Vote action
         if ( v[0] == 0 ) {
 
             // If Action Value is in correct range...
-            if ( v[1] < this->games.length ) {
+            if ( v[1] < this->games.size() ) {
 
                 // Mark the vote for game n in the voted for array
                 this->voted_for.at(player_index) = v[1];
@@ -89,11 +89,13 @@ bool MainMenu::updatePlayer(Player* p, std::vector<int> v) {
 
     }
 
+    return false;
+
 }
 
 int MainMenu::mostVotedGame() {
 
-    std::vector<int> game_score( this->games.length + 1 );
+    std::vector<int> game_score( this->games.size() + 1 );
 
     for ( int v: this->voted_for ) {
 
@@ -111,7 +113,7 @@ int MainMenu::mostVotedGame() {
     }
 
     int max = 0;
-    for ( int i = 0; i < game_score.length; ++i ) {
+    for ( int i = 0; i < game_score.size(); ++i ) {
 
         if ( game_score.at(max) < game_score.at(i) ) {
 
@@ -139,13 +141,15 @@ bool MainMenu::update() {
         current_game = next_game;
 
         for (Player* p: this->players)
-            next_game.addPlayer(p);
+            this->games.at(current_game)->addPlayer(p);
 
     }
 
     // update the running game
     if ( current_game < 0 )
         this->games.at(current_game)->update();
+
+    return true;
 
 }
 
@@ -155,12 +159,14 @@ bool MainMenu::isRunning() {
 
 }
 
-bool MainMenu::render(Image[]* i) {
+bool MainMenu::render(Image* i) {
 
     if ( current_game < 0 )
         this->games.at(current_game)->render(i);
     else
         void; // Render main menu, later
+
+    return true;
 
 }
 
@@ -170,5 +176,7 @@ bool MainMenu::reset() {
     this->next_game_vote.clear();
     this->voted_for.clear();
     current_game = -1;
+
+    return true;
 
 }

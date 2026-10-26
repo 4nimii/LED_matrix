@@ -1,3 +1,6 @@
+#pragma once
+#include <cstdint>
+#include <vector>
 
 /**
  * @class Image
@@ -7,9 +10,9 @@ class Image {
 
     private:
 
-        uint8_t[] pixels;
         int size_x;
         int size_y;
+        std::vector<uint8_t> pixels;
 
     public:
 
@@ -27,4 +30,4 @@ class Image {
          */
         bool clear();
 
-}
+};

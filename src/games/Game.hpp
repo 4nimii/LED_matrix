@@ -1,5 +1,8 @@
+#pragma once
+#include <vector>
 
 #include "Player.hpp"
+#include "../display/Image.hpp"
 
 
 /**
@@ -38,7 +41,7 @@ class Game {
          * @fn render
          * @desc Render the current game state to the Image object
          */
-        virtual bool render(Image[]* ) = 0;
+        virtual bool render(Image* i) = 0;
 
         /**
          * @fn update
@@ -52,4 +55,4 @@ class Game {
          */
         virtual bool reset() = 0;
 
-}
+};

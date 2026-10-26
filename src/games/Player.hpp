@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 class Player {
@@ -18,4 +19,4 @@ class Player {
          */
         std::string getID();
 
-}
+};
