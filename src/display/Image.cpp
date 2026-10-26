@@ -1,5 +1,13 @@
 #include "image.hpp"
 
+Image::Image(int size_x, int size_y) {
+
+    this->size_x = size_x;
+    this->size_y = size_y;
+    this->pixels = new int[size_x * size_y];
+
+}
+
 bool Image::setPixelAt(int x, int y, uint8_t color) {
 
     if ( x < 0 && x > this->size_x) return false;

@@ -1,12 +1,11 @@
-/*
- * Mother class of all the Games to provide the same basic access to all of them.
- *
- *
- *
- *
- *
- */
 
+#include "Player.hpp"
+
+
+/**
+ * @class Game
+ * @desc Abstract class to define any object which manage players, need to react to player action and render something.
+ */
 class Game {
 
     public:

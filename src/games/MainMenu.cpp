@@ -1,8 +1,9 @@
-#include "mainMenu.hpp"
+#include "MainMenu.hpp"
 
-MainMenu::MainMenu() {
+MainMenu::MainMenu(std::vector<Game*> games) {
 
     current_game = -1;
+    this->games = games;
 
 }
 bool MainMenu::addPlayer(Player* p) {
@@ -16,7 +17,7 @@ bool MainMenu::addPlayer(Player* p) {
     // Also add the player to the running game...
     if ( current_game >= 0 ) {
 
-        this->games.at(current_game).addPlayer(p);
+        this->games.at(current_game)->addPlayer(p);
 
     }
 
@@ -55,7 +56,7 @@ bool MainMenu::removePlayer(Player* p) {
     // Also remove the player from the running game...
     if ( current_game >= 0 ) {
 
-        this->games.at(current_game).removePlayer(p);
+        this->games.at(current_game)->removePlayer(p);
 
     }
 
@@ -90,7 +91,7 @@ bool MainMenu::updatePlayer(Player* p, std::vector<int> v) {
 
 }
 
-int MainMenu::most_voted_game() {
+int MainMenu::mostVotedGame() {
 
     std::vector<int> game_score( this->games.length + 1 );
 
@@ -126,14 +127,14 @@ int MainMenu::most_voted_game() {
 
 bool MainMenu::update() {
 
-    int next_game = most_voted_game();
+    int next_game = mostVotedGame();
 
     // We change of game...
     if ( next_game != current_game ) {
 
         // if the current game is a game and not the main menu (main menu = -1, neutral vote);
         if (current_game >= 0)
-            this->games.at(current_game).reset();
+            this->games.at(current_game)->reset();
 
         current_game = next_game;
 
@@ -144,7 +145,7 @@ bool MainMenu::update() {
 
     // update the running game
     if ( current_game < 0 )
-        this->games.at(current_game).update();
+        this->games.at(current_game)->update();
 
 }
 
@@ -154,9 +155,12 @@ bool MainMenu::isRunning() {
 
 }
 
-bool MainMenu::render(Image[]* ) {
+bool MainMenu::render(Image[]* i) {
 
-    // Render sdsfqfpgjmgdsk fmqùdf kllskgsfjdlks...
+    if ( current_game < 0 )
+        this->games.at(current_game)->render(i);
+    else
+        void; // Render main menu, later
 
 }
 
@@ -164,10 +168,7 @@ bool MainMenu::reset() {
 
     this->players.clear();
     this->next_game_vote.clear();
-    this->games.clear();
     this->voted_for.clear();
     current_game = -1;
-
-    // Reload Games ??
 
 }

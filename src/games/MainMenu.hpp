@@ -1,8 +1,11 @@
-#include <vector.h>
+#include <vector>
 
-#include "game.hpp"
+#include "Game.hpp"
 
-
+/**
+ * @class MainMenu
+ * @desc Program Main menu, manage and lauch all the other games.
+ */
 class MainMenu: public Game {
 
     private:
@@ -14,11 +17,11 @@ class MainMenu: public Game {
         int current_game;
 
         int getPlayerIndex(Player* );
-        int most_voted_game();
+        int mostVotedGame();
 
     public:
 
-        MainMenu();
+        MainMenu(std::vector<Game*> games);
         override bool addPlayer(Player* );
         override bool removePlayer(Player* );
         override bool updatePlayer(Player* , std::vector<int> );
