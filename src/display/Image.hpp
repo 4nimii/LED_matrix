@@ -29,6 +29,12 @@ class Image {
         uint8_t getPixelAt(int x, int y);
 
         /**
+         * @fn getPixelInView
+         * @desc Return pixel at vw, vh
+         */
+        uint8_t getPixelInView(float vw, float vh);
+
+        /**
          * @fn setPixelAt
          * @desc Color pixel at x, y
          */

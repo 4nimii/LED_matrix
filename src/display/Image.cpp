@@ -40,6 +40,17 @@ uint8_t Image::getPixelAt(int x, int y) {
 
 }
 
+
+uint8_t Image::getPixelInView(float vw, float vh) {
+
+    int x = (int)(vw / this->view_unit_x);
+    int y = (int)(vh / this->view_unit_y);
+
+    return this->pixels[x + y * size_x];
+
+}
+
+
 float Image::weigthUnit() {
 
     return this->view_unit_x;
@@ -121,6 +132,8 @@ bool Image::drawCircle(float vw, float vh, float radius) {
 }
 
 bool Image::drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3) {
+
+
 
     return true;
 }

@@ -24,18 +24,26 @@ bool Sdl::display(Image* img) {
     if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
         return false;
 
-    int size_x = (int)(1. / (img->weigthUnit()));
-    int size_y = (int)(1. / (img->heigthUnit()));
+    float steps_x = 1./this->size_x;
+    float steps_y = 1./this->size_y;
+    int x = 0;
+    int y = 0;
 
-    for (int l = 0; l <= size_y; l++) {
+    for (float l = 0.; l < 1.; l += steps_y) {
 
-        for (int k = 0; k <= size_x; k++) {
+        for (float k = 0.; k < 1.; k += steps_x) {
 
-            uint8_t p = img->getPixelAt(k, l);
+            uint8_t p = img->getPixelInView(k, l);
+
             SDL_SetRenderDrawColor(renderer, p >> 6, (p << 2) >> 6, (p << 4) >> 6, 255);
-            SDL_RenderDrawPoint(renderer, k, l);
+            SDL_RenderDrawPoint(renderer, x, y);
+
+            x++;
 
         }
+
+        x = 0;
+        y++;
 
     }
 
