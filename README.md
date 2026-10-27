@@ -1,5 +1,7 @@
 # LED Matrix
 
+<img width="504" height="500" alt="render" src="https://github.com/user-attachments/assets/4ceced12-3c18-4a05-aed7-6c3eaced59d4" />
+
 The goal of the project is to use a LED display to display things.
 
 Currently we have:
