@@ -5,4 +5,5 @@ CMakeCache.txt
 compile_commands.json
 Makefile
 build/
-doxygen/
+Doxygen/html
+Doxygen/latex
