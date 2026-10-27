@@ -13,14 +13,17 @@ Currently we have:
 - What we need is:
   - Make an actual game and add it to the main menu
   - Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)
-  - Implement network managment/player managment with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
+  - Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
   - Add display driver for our LED display
   - It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)
   - Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core, calling the SDL renderer twice for each pixel might also be a big bottle-neck.
+  - Make the triangle primitive (https://gfxcourses.stanford.edu/cs248a/winter24content/media/drawing/02_drawtriangle.pdf) (needed if we're going to make the circular pong, could even be use for 3D)
 - What we can do right now is:
   - Start the Main menu
   - Use the main menu to render something on the Image object
   - Display the image object with a display driver
+ 
+Quick note here: The internal image pixels can be accessed view units, this mean, displaying pixels on a LED display of various density/size become trivial. We can display a 24x86 image on a 546x963 screen the same way we would display this 24x86 on a 24x86 screen, and we could for instance easily display the same image on four screens of 32x64, 98x67, 5420x6320 and 9x10.
   
 ```mermaid
 classDiagram
