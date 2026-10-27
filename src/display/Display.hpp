@@ -9,5 +9,6 @@ class Display {
     public:
 
         virtual bool display(Image* ) = 0;
+        virtual ~Display() = default;
 
 };

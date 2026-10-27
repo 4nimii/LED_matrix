@@ -3,6 +3,9 @@
 
 class Stdout: public Display {
 
-    bool display(Image* ) override;
+    public:
+
+        ~Stdout() = default;
+        bool display(Image* ) override;
 
 };
