@@ -60,33 +60,33 @@ class Image {
         float heigthUnit();
 
         /**
-         * @fn displayGlyph
+         * @fn drawGlyph
          * @desc Display a glyph at defined coordinates
          */
-        bool displayGlyph(std::string glyph, float vw, float vh);
+        bool drawGlyph(std::string glyph, float vw, float vh);
 
         /**
-         * @fn displayText
+         * @fn drawText
          * @desc Display text at defined coordinates
          */
-        bool displayText(std::string text, float vw, float vh);
+        bool drawText(std::string text, float vw, float vh);
 
         /**
-         * @fn displayRect
+         * @fn drawRect
          * @desc Display a rectangle at defined coordinates
          */
-        bool displayRect(float vw, float vh, float weight, float height);
+        bool drawRect(float vw, float vh, float weight, float height);
 
         /**
-         * @fn displayCircle
+         * @fn drawCircle
          * @desc Display a circle at defined coordinates
          */
-        bool displayCircle(float vw, float vh, float radius);
+        bool drawCircle(float vw, float vh, float radius);
 
         /**
-         * @fn displayTriangle
+         * @fn drawTriangle
          * @desc Display a triangle at defined coordinates
          */
-        bool displayTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3);
+        bool drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3);
 
 };

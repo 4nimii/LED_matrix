@@ -68,16 +68,16 @@ bool Image::clear() {
 
 }
 
-bool Image::displayGlyph(std::string glyph, float vw, float vh) {
+bool Image::drawGlyph(std::string glyph, float vw, float vh) {
     return true;
 }
 
 
-bool Image::displayText(std::string text, float vw, float vh) {
+bool Image::drawText(std::string text, float vw, float vh) {
     return true;
 }
 
-bool Image::displayRect(float vw, float vh, float weight, float height) {
+bool Image::drawRect(float vw, float vh, float weight, float height) {
 
     int pixel_x = (int)(vw / this->view_unit_x);
     int pixel_y = (int)(vh / this->view_unit_y);
@@ -97,7 +97,7 @@ bool Image::displayRect(float vw, float vh, float weight, float height) {
     return true;
 }
 
-bool Image::displayCircle(float vw, float vh, float radius) {
+bool Image::drawCircle(float vw, float vh, float radius) {
 
     int pixel_x = (int)(vw / this->view_unit_x);
     int pixel_y = (int)(vh / this->view_unit_y);
@@ -120,7 +120,7 @@ bool Image::displayCircle(float vw, float vh, float radius) {
     return true;
 }
 
-bool Image::displayTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3) {
+bool Image::drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3) {
 
     return true;
 }
