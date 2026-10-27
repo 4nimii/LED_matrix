@@ -173,6 +173,8 @@ bool MainMenu::render(Image* i) {
         i->drawRect(0.1, 0.05, std::abs(std::cos(iterations * i->weigthUnit() * 2)), std::abs(std::cos(iterations * i->heigthUnit())));
         i->setDrawingColor(255);
         i->drawCircle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2);
+        i->setDrawingColor(63);
+        i->drawTriangle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2, 0.7, 0.3, 0.2);
     }
 
     return true;

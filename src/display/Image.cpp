@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <cmath>
 #include <string>
+#include <algorithm>
 #include "logger.h"
 
 #include "Image.hpp"
@@ -132,6 +133,25 @@ bool Image::drawCircle(float vw, float vh, float radius) {
 }
 
 bool Image::drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3) {
+    int x1 = (int)(vw1 / this->view_unit_x), y1 = (int)(vh1 / this->view_unit_y);
+    int x2 = (int)(vw2 / this->view_unit_x), y2 = (int)(vh2 / this->view_unit_y);
+    int x3 = (int)(vw3 / this->view_unit_x), y3 = (int)(vh3 / this->view_unit_y);
 
+    int minx = std::min({x1, x2, x3}), maxx = std::max({x1, x2, x3});
+    int miny = std::min({y1, y2, y3}), maxy = std::max({y1, y2, y3});
+
+    auto sign = [](int px, int py, int ax, int ay, int bx, int by) {
+        return (px - bx) * (ay - by) - (ax - bx) * (py - by);
+    };
+
+    for (int y = miny; y <= maxy; y++) {
+        for (int x = minx; x <= maxx; x++) {
+            int d1 = sign(x, y, x1, y1, x2, y2);
+            int d2 = sign(x, y, x2, y2, x3, y3);
+            int d3 = sign(x, y, x3, y3, x1, y1);
+            if ((d1 <= 0 && d2 <= 0 && d3 <= 0) || (d1 >= 0 && d2 >= 0 && d3 >= 0))
+                setPixelAt(x, y);
+        }
+    }
     return true;
 }
