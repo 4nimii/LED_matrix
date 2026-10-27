@@ -25,12 +25,12 @@ int main(int argc, char** argv) {
     logger(0, "- Loaded Main Menu");
 
     // select correct size with argv, argc
-    Image* screen = new Image(1024, 1024);
+    Image* screen = new Image(512, 512);
 
     logger(0, "- Loaded Image (screen)");
 
     // select correct driver with argv, argc
-    Display* display = new Sdl(1024, 1024);
+    Display* display = new Sdl(512, 512);
 
     logger(0, "- Loaded Display");
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
         }
 
         //Just to avoid to use all of the CPU because we try to render at 65465 frames/seconds
-        sleep_for(50ms);
+        sleep_for(1ms);
 
     }
 

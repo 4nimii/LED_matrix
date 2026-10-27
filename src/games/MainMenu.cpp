@@ -1,3 +1,4 @@
+#include <cmath>
 
 #include "MainMenu.hpp"
 
@@ -162,11 +163,16 @@ bool MainMenu::isRunning() {
 
 bool MainMenu::render(Image* i) {
 
+    i->clear();
+    iterations += 1;
+
     if ( current_game >= 0 )
         this->games.at(current_game)->render(i);
     else {
-        i->drawCircle(0.2, 0.2, 0.3);
-        i->drawRect(0.1, 0.05, 0.3, 0.1);
+        i->setDrawingColor(142);
+        i->drawRect(0.1, 0.05, std::abs(std::cos(iterations * i->weigthUnit() * 2)), std::abs(std::cos(iterations * i->heigthUnit())));
+        i->setDrawingColor(255);
+        i->drawCircle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), 0.2);
     }
 
     return true;

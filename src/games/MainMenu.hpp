@@ -16,6 +16,7 @@ class MainMenu: public Game {
         std::vector<Game*> games;
         std::vector<int> voted_for;
         int current_game;
+        float iterations;
 
         int getPlayerIndex(Player* );
         int mostVotedGame();

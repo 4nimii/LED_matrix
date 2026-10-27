@@ -37,8 +37,6 @@ bool Sdl::display(Image* img) {
 
         }
 
-        printf("\n");
-
     }
 
     SDL_RenderPresent(renderer);
