@@ -14,7 +14,7 @@ Currently we have:
   - Implement network managment/player managment with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
   - Add display driver for our LED display
   - It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)
-  - Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core.
+  - Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core, calling the SDL renderer twice for each pixel might also be a big bottle-neck.
 - What we can do right now is:
   - Start the Main menu
   - Use the main menu to render something on the Image object

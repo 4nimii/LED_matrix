@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     logger(0, "- Loaded Main Menu");
 
     // select correct size with argv, argc
-    Image* screen = new Image(32, 64);
+    Image* screen = new Image(128, 128);
 
     logger(0, "- Loaded Image (screen)");
 

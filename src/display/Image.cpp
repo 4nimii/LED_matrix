@@ -133,7 +133,5 @@ bool Image::drawCircle(float vw, float vh, float radius) {
 
 bool Image::drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3) {
 
-
-
     return true;
 }
