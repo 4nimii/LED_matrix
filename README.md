@@ -23,7 +23,7 @@ Currently we have:
   - Use the main menu to render something on the Image object
   - Display the image object with a display driver
  
-Quick note here: The internal image pixels can be accessed view units, this mean, displaying pixels on a LED display of various density/size become trivial. We can display a 24x86 image on a 546x963 screen the same way we would display this 24x86 on a 24x86 screen, and we could for instance easily display the same image on four screens of 32x64, 98x67, 5420x6320 and 9x10.
+Quick note here: The internal image pixels can be accessed by view units, this mean, displaying pixels on a LED display of various density/size become trivial. We can display a 24x86 image on a 546x963 screen the same way we would display this 24x86 on a 24x86 screen, and we could for instance easily display the same image on four screens of 32x64, 98x67, 5420x6320 and 9x10.
   
 ```mermaid
 classDiagram
