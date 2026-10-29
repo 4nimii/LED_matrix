@@ -1,6 +1,6 @@
 # LED Matrix
 
-<img width="504" height="500" alt="render" src="https://github.com/user-attachments/assets/c538b5b5-daa6-4aed-acdb-2171315768d1" />
+<img width="494" height="494" alt="render" src="https://github.com/user-attachments/assets/36692f7c-b677-415b-ae21-c3d7add0b90c" />
 
 The goal of the project is to use a LED display to display things.
 
@@ -12,7 +12,7 @@ Currently we have:
   - A main menu to manage each games
 - What we need is:
   - Make an actual game and add it to the main menu
-  - Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)
+  - ~~Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)~~
   - Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
   - Add display driver for our LED display
   - It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)
