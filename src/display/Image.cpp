@@ -20,10 +20,12 @@ Image::Image(int size_x, int size_y) {
 
     this->clear();
 
+    this->fontLoaded = false;
+
     int error = FT_Init_FreeType( &library );
     if ( error )
     {
-        logger(3, "An error occured during FreeType init (/display/Image.cpp:22)");
+        logger(3, "An error occured during FreeType init (/display/Image.cpp:28)");
     }
 
 }
@@ -36,18 +38,18 @@ bool Image::loadFont(std::string path) {
                          &face );
     if ( error == FT_Err_Unknown_File_Format )
     {
-        logger(3, "The provided font file is not in a known font format!");
+        logger(3, "The provided font file is not in a known font format! (/display/Image.cpp:41)");
         return false;
     }
     else if ( error )
     {
-        logger(3, "Could not open the provided font file!");
+        logger(3, "Could not open the provided font file! (/display/Image.cpp:46)");
         return false;
     }
 
     logger(0, "- Loaded font");
+    this->fontLoaded = true;
 
-    // STF_FONT is defined in schrift's cpp file,  we can't check if it was created or not.
     return true;
 
 }
@@ -113,6 +115,11 @@ bool Image::clear() {
 
 bool Image::drawGlyph(std::string glyph, int x, int y, int size_x, int size_y) {
 
+    if ( !this->fontLoaded ) {
+        logger(3, "Attempted to draw glyph when no font was loaded! (/display/Image.cpp:119)");
+        return false;
+    }
+
     int error = FT_Set_Pixel_Sizes(face, size_x, size_y );
 
     // If someone want to add real Unicode support...
@@ -146,7 +153,7 @@ bool Image::drawGlyph(std::string glyph, int x, int y, int size_x, int size_y) {
 
             // For monochrome bitmaps, each byte contains 8 pixels
             int byte_index = row * bitmap->pitch + (col / 8);
-            int bit_index = 7 - (col % 8);  // Bits are stored MSB first
+            int bit_index = 7 - (col % 8);
 
             // Extract the bit for this pixel
             uint8_t pixel_value = (bitmap->buffer[byte_index] >> bit_index) & 1;
@@ -164,6 +171,11 @@ bool Image::drawGlyph(std::string glyph, int x, int y, int size_x, int size_y) {
 }
 
 bool Image::drawText(std::string text, float vw, float vh, float weight, float height) {
+
+    if ( !this->fontLoaded ) {
+        logger(3, "Attempted to draw text when no font was loaded! (/display/Image.cpp:176)");
+        return false;
+    }
 
     int pixel_x = (int)(vw / this->view_unit_x);
     int pixel_y = (int)(vh / this->view_unit_y);

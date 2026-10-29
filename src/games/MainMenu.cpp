@@ -176,7 +176,7 @@ bool MainMenu::render(Image* i) {
         i->setDrawingColor(63);
         i->drawTriangle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2, 0.7, 0.3, 0.2);
         i->setDrawingColor(255);
-        i->drawText("Hello world", 0., std::abs(std::cos(iterations * i->weigthUnit() * 2)), 1., 0.5);
+        i->drawText("Hello world", 0., std::abs(std::cos(iterations * i->weigthUnit() * 2)), 1., .1);
     }
 
     return true;
