@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include "ft2build.h"
+#include FT_FREETYPE_H
 
 /**
  * @class Image
@@ -17,10 +19,14 @@ class Image {
         uint8_t drawing_color;
         float view_unit_x;
         float view_unit_y;
+        FT_Library  library;
+        FT_Face     face;
 
     public:
 
         Image(int size_x, int size_y);
+
+        bool loadFont(std::string path);
 
         /**
          * @fn getPixelAt
@@ -69,13 +75,13 @@ class Image {
          * @fn drawGlyph
          * @desc Display a glyph at defined coordinates
          */
-        bool drawGlyph(std::string glyph, float vw, float vh);
+        bool drawGlyph(std::string glyph, int x, int y, int size_x, int size_y);
 
         /**
          * @fn drawText
          * @desc Display text at defined coordinates
          */
-        bool drawText(std::string text, float vw, float vh);
+        bool drawText(std::string text, float vw, float vh, float weight, float height);
 
         /**
          * @fn drawRect

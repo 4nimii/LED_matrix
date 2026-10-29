@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cmath>
+#include <cstdio>
 #include <string>
 #include <algorithm>
 #include "logger.h"
@@ -18,6 +19,36 @@ Image::Image(int size_x, int size_y) {
     this->drawing_color = 255;
 
     this->clear();
+
+    int error = FT_Init_FreeType( &library );
+    if ( error )
+    {
+        logger(3, "An error occured during FreeType init (/display/Image.cpp:22)");
+    }
+
+}
+
+bool Image::loadFont(std::string path) {
+
+    int error = FT_New_Face( library,
+                         path.c_str(),
+                         0,
+                         &face );
+    if ( error == FT_Err_Unknown_File_Format )
+    {
+        logger(3, "The provided font file is not in a known font format!");
+        return false;
+    }
+    else if ( error )
+    {
+        logger(3, "Could not open the provided font file!");
+        return false;
+    }
+
+    logger(0, "- Loaded font");
+
+    // STF_FONT is defined in schrift's cpp file,  we can't check if it was created or not.
+    return true;
 
 }
 
@@ -80,12 +111,71 @@ bool Image::clear() {
 
 }
 
-bool Image::drawGlyph(std::string glyph, float vw, float vh) {
+bool Image::drawGlyph(std::string glyph, int x, int y, int size_x, int size_y) {
+
+    int error = FT_Set_Pixel_Sizes(face, size_x, size_y );
+
+    // If someone want to add real Unicode support...
+    int glyph_index = FT_Get_Char_Index( face, (uint_fast32_t)glyph[0] );
+
+    error = FT_Load_Glyph(
+        face,
+        glyph_index,
+        FT_LOAD_DEFAULT );
+
+    if (error) {
+        logger(3, "Could not load glyph!");
+        return false;
+    }
+
+    error = FT_Render_Glyph( face->glyph, FT_RENDER_MODE_MONO );
+
+    if (error) {
+        logger(3, "Could not render glyph!");
+        return false;
+    }
+
+    // Place the glyph bitmap on our image
+    FT_Bitmap* bitmap = &face->glyph->bitmap;
+    int bearingX = face->glyph->bitmap_left;
+    int bearingY = face->glyph->bitmap_top;
+
+    for (int row = 0; row < bitmap->rows; row++) {
+
+        for (int col = 0; col < bitmap->width; col++) {
+
+            // For monochrome bitmaps, each byte contains 8 pixels
+            int byte_index = row * bitmap->pitch + (col / 8);
+            int bit_index = 7 - (col % 8);  // Bits are stored MSB first
+
+            // Extract the bit for this pixel
+            uint8_t pixel_value = (bitmap->buffer[byte_index] >> bit_index) & 1;
+
+            if (pixel_value) {
+
+                int pixel_x = x + col;
+                int pixel_y = (y + row - bearingY) + size_y;
+                setPixelAt(pixel_x, pixel_y);
+            }
+        }
+    }
+
     return true;
 }
 
+bool Image::drawText(std::string text, float vw, float vh, float weight, float height) {
 
-bool Image::drawText(std::string text, float vw, float vh) {
+    int pixel_x = (int)(vw / this->view_unit_x);
+    int pixel_y = (int)(vh / this->view_unit_y);
+    int pixel_size_x = (int)(weight / this->view_unit_x);
+    int pixel_size_y = (int)(height / this->view_unit_y);
+
+    int char_size = pixel_size_x/text.length();
+
+    for (int cursor = 0; cursor < text.length(); cursor++) {
+        drawGlyph(std::string(1, text[cursor]), cursor * char_size + pixel_x, pixel_y, char_size, pixel_size_y);
+    }
+
     return true;
 }
 
