@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
 
     // select correct size with argv, argc
     Image* screen = new Image(128, 128);
+    screen->loadFont("build/EBGaramond-Regular.ttf");
 
     logger(0, "- Loaded Image (screen)");
 
