@@ -1,6 +1,6 @@
 # LED Matrix
 
-<img width="504" height="500" alt="render" src="https://github.com/user-attachments/assets/c538b5b5-daa6-4aed-acdb-2171315768d1" />
+<img width="494" height="494" alt="render" src="https://github.com/user-attachments/assets/36692f7c-b677-415b-ae21-c3d7add0b90c" />
 
 The goal of the project is to use a LED display to display things.
 
@@ -12,7 +12,7 @@ Currently we have:
   - A main menu to manage each games
 - What we need is:
   - Make an actual game and add it to the main menu
-  - Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)
+  - ~~Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)~~
   - Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
   - Add display driver for our LED display
   - It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)
@@ -28,26 +28,35 @@ Quick note here: The internal image pixels can be accessed by view units, this m
 ```mermaid
 classDiagram
 class Game {
-        bool addPlayer(Player* )
-        bool removePlayer(Player* )
-        bool updatePlayer(Player* , std::vector<int> )
-        bool isRunning()
-        bool render(Image* i)
-        bool update()
-        bool reset()
+
+        virtual bool addPlayer(Player* ) = 0;
+        virtual bool removePlayer(Player* ) = 0;
+        virtual bool updatePlayer(Player* , std::vector<int> ) = 0;
+        virtual bool isRunning() = 0;
+        virtual bool render(Image* i) = 0;
+        virtual bool update() = 0;
+        virtual bool reset() = 0;
+
 }
 
 class MainMenu {
 
-        std::vector<Player*> players
-        std::vector<int> next_game_vote
-        std::vector<Game*> games
-        std::vector<int> voted_for
-        int current_game
-
-        int getPlayerIndex(Player* )
-        int mostVotedGame()
-        MainMenu(std::vector<Game*> games)
+        std::vector<Player*> players;
+        std::vector<int> next_game_vote;
+        std::vector<Game*> games;
+        std::vector<int> voted_for;
+        int current_game;
+        float iterations;
+        int getPlayerIndex(Player* );
+        int mostVotedGame();
+        MainMenu(std::vector<Game*> games);
+        bool addPlayer(Player* ) override;
+        bool removePlayer(Player* ) override;
+        bool updatePlayer(Player* , std::vector<int> ) override;
+        bool isRunning() override;
+        bool render(Image* i) override;
+        bool update() override;
+        bool reset() override;
 
 }
 
@@ -60,6 +69,22 @@ class Player {
 
 }
 
+class Pong {
+
+    std::vector<Player*> players;
+    std::vector<int> scores;
+    int getPlayerIndex(Player* );
+    Pong() = default;
+    bool addPlayer(Player* ) override;
+    bool removePlayer(Player* )override;
+    bool updatePlayer(Player* , std::vector<int> ) override;
+    bool isRunning() override;
+    bool render(Image* i) override;
+    bool update() override;
+    bool reset() override;
+
+}
+
 class Image {
 
         int size_x;
@@ -68,16 +93,19 @@ class Image {
         uint8_t drawing_color;
         float view_unit_x;
         float view_unit_y;
-
+        FT_Library  library;
+        FT_Face     face;
         Image(int size_x, int size_y);
+        bool loadFont(std::string path);
         uint8_t getPixelAt(int x, int y);
+        uint8_t getPixelInView(float vw, float vh);
         bool setPixelAt(int x, int y);
         bool setDrawingColor(uint8_t color);
         bool clear();
         float weigthUnit();
         float heigthUnit();
-        bool drawGlyph(std::string glyph, float vw, float vh);
-        bool drawText(std::string text, float vw, float vh);
+        bool drawGlyph(std::string glyph, int x, int y, int size_x, int size_y);
+        bool drawText(std::string text, float vw, float vh, float weight, float height);
         bool drawRect(float vw, float vh, float weight, float height);
         bool drawCircle(float vw, float vh, float radius);
         bool drawTriangle(float vw1, float vh1, float vw2, float vh2, float vw3, float vh3);
@@ -91,12 +119,6 @@ class Display {
 
 }
 
-class Stdout {
-
-        ~Stdout() = default;
-
-}
-
 class Sdl {
 
         int size_x;
@@ -104,17 +126,26 @@ class Sdl {
         SDL_Event event;
         SDL_Renderer* renderer;
         SDL_Window* window;
-
         Sdl(int x, int y);
         ~Sdl();
+        bool display(Image* ) override;
+
+}
+
+class Stdout {
+
+        ~Stdout() = default;
+        bool display(Image* ) override;
 
 }
 
 MainMenu --|> Game
 MainMenu "*" *-- "*"  Player
+Pong --|> Game
 Stdout --|> Display
 Sdl --|> Display
 
 Game .. Image
 Display .. Image
+Game "*" *-- "1" MainMenu
 ```
