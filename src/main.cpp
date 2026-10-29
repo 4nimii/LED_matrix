@@ -10,6 +10,17 @@
 
 int main(int argc, char** argv) {
 
+    if ( argc != 4 ) {
+
+        logger(3, "Missing parameters: [exe] <Weight> <Height> <ttf file>");
+        return 1;
+
+    }
+
+    int size_x = std::stoi(argv[1]);
+    int size_y = std::stoi(argv[2]);
+    std::string font_path = argv[3];
+
     using namespace std::this_thread;
     using namespace std::chrono_literals;
     using std::chrono::system_clock;
@@ -25,8 +36,8 @@ int main(int argc, char** argv) {
     logger(0, "- Loaded Main Menu");
 
     // select correct size with argv, argc
-    Image* screen = new Image(128, 128);
-    screen->loadFont("build/EBGaramond-Regular.ttf");
+    Image* screen = new Image(size_x, size_y);
+    screen->loadFont(font_path);
 
     logger(0, "- Loaded Image (screen)");
 

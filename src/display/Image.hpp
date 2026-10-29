@@ -19,8 +19,9 @@ class Image {
         uint8_t drawing_color;
         float view_unit_x;
         float view_unit_y;
-        FT_Library  library;
-        FT_Face     face;
+        FT_Library library;
+        FT_Face face;
+        bool fontLoaded;
 
     public:
 
