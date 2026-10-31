@@ -8,8 +8,8 @@ MainMenu::MainMenu(std::vector<Game*> games) {
     current_game = -1;
     this->games = games;
 
-    cube = {new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(0, 0, 1), new Vec3(1, 0, 1),
-        new Vec3(0, 1, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 1), new Vec3(1, 1, 1)
+    cube = {new Vec3(0.5, 0.5, 0.5), new Vec3(0.5, 0.5, -0.5), new Vec3(0.5, -0.5, 0.5), new Vec3(0.5, -0.5, -0.5),
+            new Vec3(-0.5, 0.5, 0.5), new Vec3(-0.5, 0.5, -0.5), new Vec3(-0.5, -0.5, 0.5), new Vec3(-0.5, -0.5, -0.5)
     };
 
     this->c = new Camera();
@@ -188,7 +188,7 @@ bool MainMenu::render(Image* i) {
 
             // Apply rotations in local space
             rotationX(v, 2.);
-            rotationY(v, 3.);
+            rotationY(v, 5.);
             rotationZ(v, 1.);
 
             // Transform to world space
@@ -201,7 +201,7 @@ bool MainMenu::render(Image* i) {
             Vec2 p = translate2D(&world_vertex, this->c);
 
             i->setDrawingColor(255);
-            i->drawCircle(p.x + 0.4, p.y + 0.4, 0.01);
+            i->drawCircle(p.x + 0.5, p.y + 0.5, 0.01);
             i->setDrawingColor((uint8_t)this->iterations);
             i->drawText("LED Matrix", p.x + 0.4, p.y + 0.4, 0.5, 0.1);
 
