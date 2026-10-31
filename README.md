@@ -149,3 +149,13 @@ Game .. Image
 Display .. Image
 Game "*" *-- "1" MainMenu
 ```
+
+## Pong Game
+
+Pong is a simple tennis game, but we want a potentially infinite number of players. Our solution to fix this issue is the following (for 8 players here):
+
+<img width="1268" height="1192" alt="geogebra-export" src="https://github.com/user-attachments/assets/f57e2acf-36c1-499d-aa4c-a608a0720f71" /> (Made with Geogebra)
+
+The players would be place following the shape of a circle. To do so, we place N equidistant point for N players on the circle surface, the players as then allowed to move on the tangent of this circle at this point until the border of the screen or the first intersection with an other tangent.
+
+More simply, this shape can be summarized by a polygon, like an hexagon, where each segments are equal in length and angle.
