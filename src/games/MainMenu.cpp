@@ -1,5 +1,6 @@
 #include "MainMenu.hpp"
 #include "logger.h"
+#include <cstdint>
 
 
 MainMenu::MainMenu(std::vector<Game*> games) {
@@ -7,8 +8,8 @@ MainMenu::MainMenu(std::vector<Game*> games) {
     current_game = -1;
     this->games = games;
 
-    cube = {new Vec3(0, 0, 0.5), new Vec3(1, 0, 0.5), new Vec3(0, 0, 1), new Vec3(1, 0, 1),
-        new Vec3(0, 1, 0.5), new Vec3(1, 1, 0.5), new Vec3(0, 1, 1), new Vec3(1, 1, 1)
+    cube = {new Vec3(0, 0, 0), new Vec3(1, 0, 0), new Vec3(0, 0, 1), new Vec3(1, 0, 1),
+        new Vec3(0, 1, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 1), new Vec3(1, 1, 1)
     };
 
     this->c = new Camera();
@@ -172,7 +173,7 @@ bool MainMenu::isRunning() {
 bool MainMenu::render(Image* i) {
 
     if (iterations == 0) {
-        initCamera(i, this->c, 10);
+        initCamera(i, this->c, 30);
     }
 
     i->clear();
@@ -183,12 +184,27 @@ bool MainMenu::render(Image* i) {
     else {
         for ( Vec3* v: this->cube ) {
 
-            Vec2 p = translate2D(v, this->c);
-            i->drawCircle(p.x + 0.4, p.y + 0.4, 0.01);
+            Vec3* local_vertex = v;  // Vertex relative to cube's local origin (0,0,0)
 
-            rotationX(v, 0.05);
-            //rotationY(v, 0.2);
-            rotationZ(v, 0.1);
+            // Apply rotations in local space
+            rotationX(v, 2.);
+            rotationY(v, 3.);
+            rotationZ(v, 1.);
+
+            // Transform to world space
+            Vec3 world_vertex = Vec3(
+                local_vertex->x + 0,
+                local_vertex->y + 0,
+                local_vertex->z + 10
+            );
+
+            Vec2 p = translate2D(&world_vertex, this->c);
+
+            i->setDrawingColor(255);
+            i->drawCircle(p.x + 0.4, p.y + 0.4, 0.01);
+            i->setDrawingColor((uint8_t)this->iterations);
+            i->drawText("LED Matrix", p.x + 0.4, p.y + 0.4, 0.5, 0.1);
+
         }
     }
 
