@@ -1,11 +1,17 @@
-#include <cmath>
-
 #include "MainMenu.hpp"
+#include "logger.h"
+
 
 MainMenu::MainMenu(std::vector<Game*> games) {
 
     current_game = -1;
     this->games = games;
+
+    cube = {new Vec3(0, 0, 0.5), new Vec3(1, 0, 0.5), new Vec3(0, 0, 1), new Vec3(1, 0, 1),
+        new Vec3(0, 1, 0.5), new Vec3(1, 1, 0.5), new Vec3(0, 1, 1), new Vec3(1, 1, 1)
+    };
+
+    this->c = new Camera();
 
 }
 bool MainMenu::addPlayer(Player* p) {
@@ -75,18 +81,20 @@ bool MainMenu::updatePlayer(Player* p, std::vector<int> v) {
     // We need at least 2 parameters
     if ( v.size() >= 2 ) {
 
-        // Vote action
-        if ( v[0] == 0 ) {
+        switch (v[0]) {
 
-            // If Action Value is in correct range...
-            if ( v[1] < this->games.size() ) {
+            // Vote
+            case 0:
+                if ( v[1] < this->games.size() ) {
+                    // Mark the vote for game n in the voted for array
+                    this->voted_for.at(player_index) = v[1];
+                    return true;
+                }
 
-                // Mark the vote for game n in the voted for array
-                this->voted_for.at(player_index) = v[1];
-                return true;
-
-            }
-
+            // Pass to current game
+            case 1:
+                if (current_game >= 0)
+                    return this->games[current_game]->updatePlayer(p, v);
         }
 
     }
@@ -163,20 +171,25 @@ bool MainMenu::isRunning() {
 
 bool MainMenu::render(Image* i) {
 
+    if (iterations == 0) {
+        initCamera(i, this->c, 10);
+    }
+
     i->clear();
     iterations += 1;
 
     if ( current_game >= 0 )
         this->games.at(current_game)->render(i);
     else {
-        i->setDrawingColor(142);
-        i->drawRect(0.1, 0.05, std::abs(std::cos(iterations * i->weigthUnit() * 2)), std::abs(std::cos(iterations * i->heigthUnit())));
-        i->setDrawingColor(255);
-        i->drawCircle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2);
-        i->setDrawingColor(63);
-        i->drawTriangle(0.2, std::abs(std::cos(iterations * i->weigthUnit() * 10)), std::abs(std::cos(iterations * i->weigthUnit() * 2))/2, 0.7, 0.3, 0.2);
-        i->setDrawingColor(255);
-        i->drawText("Hello world", 0., std::abs(std::cos(iterations * i->weigthUnit() * 2)), 1., .1);
+        for ( Vec3* v: this->cube ) {
+
+            Vec2 p = translate2D(v, this->c);
+            i->drawCircle(p.x + 0.4, p.y + 0.4, 0.01);
+
+            rotationX(v, 0.05);
+            //rotationY(v, 0.2);
+            rotationZ(v, 0.1);
+        }
     }
 
     return true;
