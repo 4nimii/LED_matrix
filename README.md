@@ -167,13 +167,13 @@ Game "*" *-- "1" MainMenu
 
 Currently, it is not possible to build the project without building all the drivers and their dependencies, meaning that even if you plan to only use it with stdout, you will need SDL.
 
-Install SDL2 && FreeType header files (You probably already have SDL2 and FreeType installed).
+Install SDL2, FreeType and asio header files.
 ```bash
 #Fedora
-sudo dnf install sdl2-devel freetype-devel
+sudo dnf install sdl2-devel freetype-devel asio-devel
 
 #Debian
-sudo apt install libsdl2-dev libfreetype-dev
+sudo apt install libsdl2-dev libfreetype-dev libasio-dev
 ```
 
 Build the project.
