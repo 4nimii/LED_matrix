@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 
 #include "../Display.hpp"
+#include "../../utils/Config.hpp"
 
 
 /**
@@ -22,7 +23,7 @@ class Sdl: public Display {
 
     public:
 
-        Sdl(int x, int y);
+        Sdl( Config* conf );
         ~Sdl();
         bool display(Image* ) override;
 

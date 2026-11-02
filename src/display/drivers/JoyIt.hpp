@@ -1,5 +1,14 @@
 #pragma once
 #include "../Display.hpp"
+#include <vector>
+
+
+typedef struct {
+    int size_x;
+    int size_y;
+    int position_x;
+    int position_y;
+} LED_Screen;
 
 
 /**
@@ -15,10 +24,11 @@ class JoyIt : public Display {
 
         int _width;
         int _height;
+        std::vector<LED_Screen> _screens;
 
     public:
 
-        JoyIt(int width, int height);
+        JoyIt(  Config* conf  );
         ~JoyIt();
         bool display(Image* img) override;
 

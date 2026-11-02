@@ -6,6 +6,7 @@
 #include "display/Image.hpp"
 #include "display/Display.hpp"
 #include "display/drivers/Sdl.hpp"
+#include "utils/Config.hpp"
 
 
 using namespace std::this_thread;
@@ -15,16 +16,17 @@ using namespace std::chrono_literals;
 int main( int argc, char** argv ) {
 
 
-    if ( argc != 4 ) {
+    if ( argc != 2 ) {
 
-        logger( 3, "Missing parameters: [exe] <Weight> <Height> <ttf file>" );
+        logger( 3, "Missing parameters: [exe] <config file>" );
         return 1;
 
     }
 
-    int size_x = std::stoi( argv[1] );
-    int size_y = std::stoi( argv[2] );
-    std::string font_path = argv[3];
+    Config* conf = new Config();
+    if ( conf->parse( argv[1] ) ) return 1;
+
+    std::string font_path = conf->get("font_path");
 
     logger( 0, "-- LED Matrix Start --" );
 
@@ -36,12 +38,14 @@ int main( int argc, char** argv ) {
 
     logger( 0, "- Loaded Main Menu" );
 
-    Image* screen = new Image( size_x, size_y );
+    Image* screen = new Image( std::stoi( conf->get("matrix_x_size") ), std::stoi( conf->get("matrix_y_size") ) );
     screen->loadFont( font_path );
 
     logger( 0, "- Loaded Image (screen)" );
 
-    Display* display = new Sdl( 512, 256 );
+    Display* display;
+    if ( conf->get("driver") == "sdl")
+        display = new Sdl( conf );
 
     logger( 0, "- Loaded Display" );
 
