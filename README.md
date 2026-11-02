@@ -151,12 +151,22 @@ class Config {
         std::vector<std::string> _values;
 }
 
+class Network {
+        crow::App<crow::CORSHandler> _app;
+        int _port;
+        std::string _url;
+        Network( Config* conf );
+        bool init();
+        bool run();
+}
+
 MainMenu --|> Game
 MainMenu "*" *-- "*"  Player
 Pong --|> Game
 Stdout --|> Display
 Sdl --|> Display
 Sdl <-- Config
+Network <--config
 
 Game .. Image
 Display .. Image
