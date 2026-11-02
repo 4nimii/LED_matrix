@@ -24,7 +24,7 @@ Currently we have:
   - Display the image object with a display driver
  
 Quick note here: The internal image pixels can be accessed by view units, this mean, displaying pixels on a LED display of various density/size become trivial. We can display a 24x86 image on a 546x963 screen the same way we would display this 24x86 on a 24x86 screen, and we could for instance easily display the same image on four screens of 32x64, 98x67, 5420x6320 and 9x10.
-  
+
 ```mermaid
 classDiagram
 class Game {
@@ -148,6 +148,34 @@ Sdl --|> Display
 Game .. Image
 Display .. Image
 Game "*" *-- "1" MainMenu
+```
+
+## Build
+
+Currently, it is not possible to build the project without building all the drivers and their dependencies, meaning that even if you plan to only use it with stdout, you will need SDL.
+
+Install SDL2 && FreeType header files (You probably already have SDL2 and FreeType installed).
+```bash
+#Fedora
+sudo dnf install sdl2-devel freetype-devel
+
+#Debian
+sudo apt install libsdl2-dev libfreetype-dev
+```
+
+Build the project.
+```bash
+cmake -S . -B build
+make
+
+# Or with Ninja
+cmake
+cmake -S . -B build -G Ninja
+```
+
+You can also generate the documentation with Doxygen.
+```bash
+doxygen
 ```
 
 ## Pong Game
