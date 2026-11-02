@@ -1,5 +1,7 @@
 
 #include "Sdl.hpp"
+#include "logger.h"
+#include <string>
 
 
 #define R_MASK 0xff
@@ -7,13 +9,13 @@
 #define B_MASK 0xff0000
 
 
-Sdl::Sdl( int x, int y ) {
+Sdl::Sdl( Config* conf ) {
 
-    this->_size_x = x;
-    this->_size_y = y;
+    this->_size_x = std::stoi( conf->get("sdl_x_size") );
+    this->_size_y = std::stoi( conf->get("sdl_y_size") );
 
     SDL_Init( SDL_INIT_VIDEO );
-    SDL_CreateWindowAndRenderer( x, y, 0, &this->_window, &this->_renderer );
+    SDL_CreateWindowAndRenderer( this->_size_x, this->_size_y, 0, &this->_window, &this->_renderer );
 
 }
 
@@ -30,8 +32,10 @@ bool Sdl::display( Image* img ) {
     if ( SDL_PollEvent( &this->_event ) && this->_event.type == SDL_QUIT )
         return false;
 
+
     float steps_x = 1./this->_size_x;
     float steps_y = 1./this->_size_y;
+
     int x = 0;
     int y = 0;
 
