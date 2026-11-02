@@ -29,13 +29,14 @@ target_sources( LED_Matrix
         src/utils/geometry.cpp
         src/utils/colors.cpp
         src/utils/Config.cpp
+        src/network/Network.cpp
         include/logger/logger.cpp
 )
 
 target_include_directories( LED_Matrix
     PRIVATE
         include/logger
-
+        include/crow
 )
 
 target_link_libraries( LED_Matrix ${SDL2_LIBRARIES} )

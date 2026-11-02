@@ -7,10 +7,20 @@
 #include "display/Display.hpp"
 #include "display/drivers/Sdl.hpp"
 #include "utils/Config.hpp"
+#include "network/Network.hpp"
 
 
 using namespace std::this_thread;
 using namespace std::chrono_literals;
+
+
+void runServer( Network* s ) {
+
+    s->run();
+
+    return;
+
+}
 
 
 int main( int argc, char** argv ) {
@@ -49,6 +59,12 @@ int main( int argc, char** argv ) {
 
     logger( 0, "- Loaded Display" );
 
+    Network* server = new Network( conf );
+    server->init();
+    std::thread t( runServer, server );
+
+    logger( 0, "- Server loaded & Running" );
+
     logger( 0, "-- LED Matrix loaded --" );
 
     while ( true ) {
@@ -68,5 +84,7 @@ int main( int argc, char** argv ) {
         sleep_for( 1ms );
 
     }
+
+    return 0;
 
 }

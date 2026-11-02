@@ -15,6 +15,7 @@ Currently we have:
   2. Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
   3. Make an actual game and add it to the main menu
   - *Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core, calling the SDL renderer twice for each pixel might also be a big bottle-neck.*
+  - Currently the program crash when we close it as we do not end the CrowCpp thread correctly when we close the main loop. I don't think there is a correct solution, but who knows ¯\_(ツ)_/¯.
   - ~~Make the triangle primitive (https://gfxcourses.stanford.edu/cs248a/winter24content/media/drawing/02_drawtriangle.pdf) (needed if we're going to make the circular pong, could even be use for 3D)~~
   - ~~It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)~~
   - ~~Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)~~
@@ -139,11 +140,23 @@ class Stdout {
 
 }
 
+class Config {
+        int parse( std::string );
+        std::string get( std::string );
+        std::string get( int );
+        std::vector<std::string> keys();
+        std::vector<std::string> values();
+        int size();
+        std::vector<std::string> _keys;
+        std::vector<std::string> _values;
+}
+
 MainMenu --|> Game
 MainMenu "*" *-- "*"  Player
 Pong --|> Game
 Stdout --|> Display
 Sdl --|> Display
+Sdl <-- Config
 
 Game .. Image
 Display .. Image
@@ -177,6 +190,24 @@ You can also generate the documentation with Doxygen.
 ```bash
 doxygen
 ```
+
+## Run
+
+To run the program, you need to pass as a parameter the path to a config file. You can find an exemple config file at the root of the repository (`exemple_config`). Configuration currently look like this :
+
+```ini
+matrix_x_size=256
+matrix_y_size=256
+font_path=
+driver=sdl
+sdl_x_size=512
+sdl_y_size=512
+port=8080
+```
+
+You should set the font_path with a valid ttf file to display fonts.
+
+CrowCpp look for static files and template files in `/static` and `/templates` folders, you should place the content of `/www` in `/build` or create a link for Crow to deliver the web pages.
 
 ## Pong Game
 
