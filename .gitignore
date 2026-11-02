@@ -7,3 +7,4 @@ Makefile
 build/
 Doxygen/html
 Doxygen/latex
+*ninja*
