@@ -166,7 +166,7 @@ Pong --|> Game
 Stdout --|> Display
 Sdl --|> Display
 Sdl <-- Config
-Network <--config
+Network <--Config
 
 Game .. Image
 Display .. Image
