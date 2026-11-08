@@ -20,6 +20,7 @@ class Sdl: public Display {
         SDL_Event _event;
         SDL_Renderer* _renderer;
         SDL_Window* _window;
+        bool _sdl_ok;
 
     public:
 

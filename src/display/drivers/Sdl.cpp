@@ -14,8 +14,21 @@ Sdl::Sdl( Config* conf ) {
     this->_size_x = std::stoi( conf->get("sdl_x_size") );
     this->_size_y = std::stoi( conf->get("sdl_y_size") );
 
-    SDL_Init( SDL_INIT_VIDEO );
-    SDL_CreateWindowAndRenderer( this->_size_x, this->_size_y, 0, &this->_window, &this->_renderer );
+    this->_sdl_ok = true;
+
+    if ( SDL_Init( SDL_INIT_VIDEO ) != 0) {
+
+        logger(3, ("SDL could not start: " + std::string(SDL_GetError())).c_str() );
+        this->_sdl_ok = false;
+
+    }
+
+    if ( SDL_CreateWindowAndRenderer( this->_size_x, this->_size_y, 0, &this->_window, &this->_renderer ) ) {
+
+        logger(3, ("SDL create rendere & window: " + std::string(SDL_GetError())).c_str() );
+        this->_sdl_ok = false;
+
+    }
 
 }
 
@@ -28,6 +41,8 @@ Sdl::~Sdl() {
 }
 
 bool Sdl::display( Image* img ) {
+
+    if (!this->_sdl_ok) return false;
 
     if ( SDL_PollEvent( &this->_event ) && this->_event.type == SDL_QUIT )
         return false;
