@@ -192,8 +192,8 @@ cmake -S . -B build
 make
 
 # Or with Ninja
-cmake
 cmake -S . -B build -G Ninja
+ninja
 ```
 
 You can also generate the documentation with Doxygen.
