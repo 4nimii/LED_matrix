@@ -5,6 +5,7 @@
 #include "display/Image.hpp"
 #include "display/Display.hpp"
 #include "display/drivers/Sdl.hpp"
+#include "display/drivers/Stdout.hpp"
 #include "utils/Config.hpp"
 #include "network/Network.hpp"
 
@@ -49,12 +50,14 @@ int main( int argc, char** argv ) {
     logger( 0, "- Loaded Image (screen)" );
 
     Display* display;
-    if ( conf->get("driver") == "sdl")
+    if ( conf->get("driver") == "sdl" )
         display = new Sdl( conf );
+    else if ( conf->get("driver") == "stdout" )
+        display = new Stdout();
 
     logger( 0, "- Loaded Display" );
 
-    Network* server = new Network( conf );
+    Network* server = new Network( conf, menu );
     server->init();
     server->run();
     signal(SIGINT, endProgram);

@@ -1,6 +1,9 @@
 #include "MainMenu.hpp"
 #include "logger.h"
 #include <cstdint>
+#include <string>
+
+#include "../network/Player.hpp"
 
 
 MainMenu::MainMenu( std::vector<Game*> games ) {
@@ -32,6 +35,8 @@ bool MainMenu::addPlayer( Player* p ) {
         this->_games.at( this->_current_game )->addPlayer( p );
 
     }
+
+    logger( 1, ( "Added player with ID: " + p->getID() ).c_str() );
 
     return true;
 
@@ -74,12 +79,21 @@ bool MainMenu::removePlayer( Player* p ) {
 
     }
 
-    return false;
+    logger( 1, ( "Removed player with ID: " + p->getID() ).c_str() );
+
+    return true;
 
 }
 
 
 bool MainMenu::updatePlayer( Player* p, std::vector<int> v) {
+
+    std::string request = "[ ";
+    for ( int l: v ) {
+        request += std::to_string(l) + ", ";
+    }
+    request += " ]";
+    logger( 1, ( "Received request: " + request + " from player with ID: " + p->getID() ).c_str() );
 
     int player_index = _getPlayerIndex( p );
 

@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
 
-#include "Player.hpp"
 #include "../display/Image.hpp"
+
+
+class Player;
 
 
 /**

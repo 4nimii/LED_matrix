@@ -1,4 +1,5 @@
 #include "Pong.hpp"
+#include "../network/Player.hpp"
 
 int Pong::getPlayerIndex(Player* p) {
 
