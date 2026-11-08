@@ -21,7 +21,6 @@ add_executable( LED_Matrix )
 target_sources( LED_Matrix
     PRIVATE
         src/main.cpp
-        src/games/Player.cpp
         src/games/MainMenu.cpp
         src/display/Image.cpp
         src/display/drivers/Stdout.cpp
@@ -30,6 +29,7 @@ target_sources( LED_Matrix
         src/utils/colors.cpp
         src/utils/Config.cpp
         src/network/Network.cpp
+        src/network/Player.cpp
         include/logger/logger.cpp
 )
 

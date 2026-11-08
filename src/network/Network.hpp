@@ -3,6 +3,8 @@
 #include "crow/app.h"
 
 #include "../utils/Config.hpp"
+#include "../games/MainMenu.hpp"
+#include "Player.hpp"
 
 
 class reLogger : public crow::ILogHandler {
@@ -45,10 +47,14 @@ class Network {
         std::string _url;
         std::future<void> _crow_thread;
         reLogger* _logger;
+        std::vector<Player*> _players;
+        MainMenu* _game;
+
+        int getPlayerIndexByConnection( crow::websocket::connection* c );
 
     public:
 
-        Network( Config* conf );
+        Network( Config* conf, MainMenu* main );
         ~Network();
         bool init();
         bool run();
