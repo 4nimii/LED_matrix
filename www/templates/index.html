@@ -1,9 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    <head>
-        <title>Hello World !</title>
-    </head>
-    <body>
-        <h1>Hello World !</title>
-    </body>
+<head>
+    <script src="https://{{servername}}/static/jquery-3.1.0.min.js"></script>
+</head>
+<body>
+    <input id="msg" type="text"></input>
+    <button id="send">
+        Send
+    </button><BR>
+    <textarea id="log" cols=100 rows=50>
+    </textarea>
+    <script>
+var sock = new WebSocket("ws://{{servername}}:{{port}}/ws");
+
+sock.onopen = ()=>{
+    console.log('open')
+}
+sock.onerror = (e)=>{
+    console.log('error',e)
+}
+sock.onclose = (e)=>{
+    console.log('close', e)
+}
+sock.onmessage = (e)=>{
+    $("#log").val(
+            e.data +"\n" + $("#log").val());
+}
+$("#msg").keypress(function(e){
+    if (e.which == 13)
+    {
+    sock.send($("#msg").val());
+    $("#msg").val("");
+    }
+});
+$("#send").click(()=>{
+    sock.send($("#msg").val());
+    $("#msg").val("");
+});
+    </script>
+</body>
 </html>
