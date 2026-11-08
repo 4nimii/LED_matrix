@@ -1,37 +1,5 @@
 
 #include "Network.hpp"
-#include "logger.h"
-
-
-class reLogger : public crow::ILogHandler {
-
-public:
-
-    reLogger() {}
-    void log(const std::string& message, crow::LogLevel level) {
-
-        switch (level)
-        {
-            case crow::LogLevel::Debug:
-                logger(0, message.c_str());
-                break;
-            case crow::LogLevel::Info:
-                logger(1, message.c_str());
-                break;
-            case crow::LogLevel::Warning:
-                logger(2, message.c_str());
-                break;
-            case crow::LogLevel::Error:
-                logger(3, message.c_str());
-                break;
-            case crow::LogLevel::Critical:
-                logger(4, message.c_str());
-                break;
-        }
-
-    }
-
-};
 
 
 Network::Network( Config* conf ) {
@@ -59,9 +27,27 @@ bool Network::init() {
 
 bool Network::run() {
 
-    reLogger log;
-    crow::logger::setHandler(&log);
-    this->_app.port(this->_port).multithreaded().run();
+    this->_logger = new reLogger();
+    crow::logger::setHandler(this->_logger);
+    this->_crow_thread = this->_app.port(this->_port).run_async();
+    this->_app.signal_clear();
     return true;
+
+}
+
+
+bool Network::stop() {
+
+    this->_app.stop();
+    return true;
+
+}
+
+
+Network::~Network() {
+
+    this->stop();
+    if (this->_crow_thread.valid())
+        this->_crow_thread.get();
 
 }

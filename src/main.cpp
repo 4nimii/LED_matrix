@@ -1,5 +1,4 @@
 #include "logger.h"
-#include <thread>
 
 #include "games/Game.hpp"
 #include "games/MainMenu.hpp"
@@ -14,17 +13,13 @@ using namespace std::this_thread;
 using namespace std::chrono_literals;
 
 
-void runServer( Network* s ) {
-
-    s->run();
-
-    return;
-
+bool end_program = false;
+void endProgram(int sig) {
+    end_program = true;
 }
 
 
 int main( int argc, char** argv ) {
-
 
     if ( argc != 2 ) {
 
@@ -61,7 +56,8 @@ int main( int argc, char** argv ) {
 
     Network* server = new Network( conf );
     server->init();
-    std::thread t( runServer, server );
+    server->run();
+    signal(SIGINT, endProgram);
 
     logger( 0, "- Server loaded & Running" );
 
@@ -73,9 +69,10 @@ int main( int argc, char** argv ) {
         menu->render( screen );
 
         // For instance we closed the Window
-        if ( !display->display( screen ) ) {
+        if ( !display->display( screen ) || end_program ) {
 
             delete display;
+            delete server;
             return 0;
 
         }
