@@ -41,9 +41,13 @@ std::vector<Value> Network::parseRequest( const std::string& data ) {
         size_t pos = data.find( ',', start );
         std::string token = data.substr( start, pos == std::string::npos ? std::string::npos : pos - start );
 
+        bool is_number = !token.empty() && token.length() <= 3 &&
+            token.find_first_not_of( "0123456789" ) == std::string::npos &&
+            std::stoi( token ) <= 255;
+
         Value v;
-        if ( token.length() == 1 && token[0] >= '0' && token[0] <= '9' )
-            v.number = static_cast<uint8_t>( token[0] - '0' );
+        if ( is_number )
+            v.number = static_cast<uint8_t>( std::stoi( token ) );
         else
             v.string = token;
         request.push_back( v );
@@ -80,9 +84,13 @@ bool Network::init() {
             CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
             std::lock_guard<std::mutex> lock( this->_players_mutex );
             Player* new_p = new Player( &conn );
-            new_p->setName( "Player " + std::to_string(this->_players.size()) );
-            new_p->setGame( this->_game );
+            new_p->setName( "Player " + std::to_string( this->_next_player_number++ ) );
             this->_players.push_back( new_p );
+
+            conn.send_text( "0," + new_p->getName() );
+            new_p->setGame( this->_game );
+            for ( const std::string& m: stateMessages() )
+                conn.send_text( m );
 
         })
         .onclose([&]( crow::websocket::connection& conn, const std::string& reason, uint16_t ) {
@@ -94,8 +102,6 @@ bool Network::init() {
 
             Player* player = this->_players[p];
             this->_players.erase( this->_players.begin() + p );
-            // Removed from the menu (under its lock) before being freed,
-            // so the render loop can no longer reference it.
             player->exitGame();
             delete player;
 
@@ -109,9 +115,48 @@ bool Network::init() {
             if ( p == -1 ) return;
             this->_players[p]->updateGame( request );
 
+            if ( request[0].number && *request[0].number == 0 )
+                conn.send_text( "0," + this->_players[p]->getName() );
+
         });
 
     return true;
+}
+
+
+std::vector<std::string> Network::stateMessages() {
+
+    std::string controller = "1," + std::to_string( this->_game->getCurrentGame() ) +
+        "," + std::to_string( this->_game->getCurrentControllerType() );
+
+    std::string games = "2";
+    for ( const std::string& name: this->_game->getGameNames() )
+        games += "," + name;
+
+    std::string votes = "3";
+    for ( int count: this->_game->getVoteCounts() )
+        votes += "," + std::to_string( count );
+
+    return { games, votes, controller };
+
+}
+
+
+bool Network::sync() {
+
+    uint32_t version = this->_game->getStateVersion();
+    if ( version == this->_sent_version ) return true;
+
+    this->_sent_version = version;
+    std::vector<std::string> messages = stateMessages();
+
+    std::lock_guard<std::mutex> lock( this->_players_mutex );
+    for ( Player* p: this->_players )
+        for ( const std::string& m: messages )
+            p->getConnection()->send_text( m );
+
+    return true;
+
 }
 
 
@@ -140,7 +185,6 @@ Network::~Network() {
     if (this->_crow_thread.valid())
         this->_crow_thread.get();
 
-    // Crow is stopped: no more callbacks can touch _players.
     for ( Player* p: this->_players ) {
         p->exitGame();
         delete p;

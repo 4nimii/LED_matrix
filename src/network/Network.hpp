@@ -52,9 +52,17 @@ class Network {
         std::vector<Player*> _players;
         MainMenu* _game;
         std::mutex _players_mutex;
+        uint32_t _sent_version = 0;
+        int _next_player_number = 0;
 
         int getPlayerIndexByConnection( crow::websocket::connection* c );
         static std::vector<Value> parseRequest( const std::string& data );
+
+        /**
+         * @fn stateMessages
+         * @brief Build the server-client messages describing the menu state
+         */
+        std::vector<std::string> stateMessages();
 
     public:
 
@@ -63,5 +71,11 @@ class Network {
         bool init();
         bool run();
         bool stop();
+
+        /**
+         * @fn sync
+         * @brief Send the menu state to every client if it changed. Call once per frame.
+         */
+        bool sync();
 
 };

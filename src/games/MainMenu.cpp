@@ -48,6 +48,7 @@ bool MainMenu::addPlayer( Player* p ) {
     }
 
     logger( 1, ( "Added player with ID: " + p->getID() ).c_str() );
+    this->_state_version++;
 
     return true;
 
@@ -93,6 +94,7 @@ bool MainMenu::removePlayer( Player* p ) {
     }
 
     logger( 1, ( "Removed player with ID: " + p->getID() ).c_str() );
+    this->_state_version++;
 
     return true;
 
@@ -128,6 +130,7 @@ bool MainMenu::updatePlayer( Player* p, std::vector<Value> v) {
 
                     // Mark the vote for game n in the voted for array
                     this->_voted_for[player_index] = *v[1].number;
+                    this->_state_version++;
                     return true;
 
                 }
@@ -204,6 +207,8 @@ bool MainMenu::update() {
             for ( Player* p: this->_players )
                 this->_games[this->_current_game]->addPlayer( p );
 
+        this->_state_version++;
+
     }
 
     if ( this->_current_game >= 0 )
@@ -260,7 +265,76 @@ bool MainMenu::reset() {
     this->_next_game_vote.clear();
     this->_voted_for.clear();
     this->_current_game = -1;
+    this->_state_version++;
 
     return true;
+
+}
+
+
+int MainMenu::getControllerType() {
+
+    return 0;
+
+}
+
+
+std::string MainMenu::getName() {
+
+    return "Main menu";
+
+}
+
+
+uint32_t MainMenu::getStateVersion() {
+
+    return this->_state_version;
+
+}
+
+
+std::vector<std::string> MainMenu::getGameNames() {
+
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
+    std::vector<std::string> names;
+    for ( Game* g: this->_games )
+        names.push_back( g->getName() );
+
+    return names;
+
+}
+
+
+std::vector<int> MainMenu::getVoteCounts() {
+
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
+    std::vector<int> counts( this->_games.size(), 0 );
+    for ( int v: this->_voted_for )
+        if ( v >= 0 && v < counts.size() )
+            counts[v] += 1;
+
+    return counts;
+
+}
+
+
+int MainMenu::getCurrentGame() {
+
+    std::lock_guard<std::mutex> lock( this->_mutex );
+    return this->_current_game;
+
+}
+
+
+int MainMenu::getCurrentControllerType() {
+
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
+    if ( this->_current_game >= 0 )
+        return this->_games[this->_current_game]->getControllerType();
+
+    return this->getControllerType();
 
 }

@@ -39,8 +39,22 @@ crow::websocket::connection* Player::getConnection() {
 
 bool Player::setName( std::string n ) {
 
+    std::string clean;
+    for ( char c: n )
+        if ( c != ',' && static_cast<unsigned char>( c ) >= 0x20 && c != 0x7f )
+            clean += c;
+
+    if ( clean.size() > 16 ) {
+        size_t cut = 16;
+        while ( cut > 0 && ( static_cast<unsigned char>( clean[cut] ) & 0xC0 ) == 0x80 )
+            cut--;
+        clean.resize( cut );
+    }
+
+    if ( clean.empty() ) return false;
+
     std::lock_guard<std::mutex> lock( this->_name_mutex );
-    this->_name = n;
+    this->_name = clean;
     return true;
 
 }
@@ -62,6 +76,9 @@ bool Player::updateGame( std::vector<Value> request ) {
 
         if ( request.size() >= 2 && request[1].string )
             return this->setName( *request[1].string );
+
+        if ( request.size() >= 2 && request[1].number )
+            return this->setName( std::to_string( *request[1].number ) );
 
         return false;
 
