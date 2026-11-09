@@ -12,17 +12,19 @@ Currently we have:
   - A main menu to manage each games
 - What we need is:
   1. **Add display driver for our LED display**
-  2. Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)
-  3. Make an actual game and add it to the main menu
+  2. **Make an actual game and add it to the main menu**
   - *Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core, calling the SDL renderer twice for each pixel might also be a big bottle-neck.*
-  - Currently the program crash when we close it as we do not end the CrowCpp thread correctly when we close the main loop. I don't think there is a correct solution, but who knows ¯\_(ツ)_/¯.
+  - ~~Currently the program crash when we close it as we do not end the CrowCpp thread correctly when we close the main loop. I don't think there is a correct solution, but who knows ¯\_(ツ)_/¯.~~
   - ~~Make the triangle primitive (https://gfxcourses.stanford.edu/cs248a/winter24content/media/drawing/02_drawtriangle.pdf) (needed if we're going to make the circular pong, could even be use for 3D)~~
   - ~~It would be cool to have a Util folder with convenience functions/Macros like RGB() or HSL() to be able to write RGB/HSL color code in the program and directly convert them to uint8_t (or maybe uint16_t in the future)~~
   - ~~Implement font rendering with the lib. [Schrift](https://tomolt.github.io/libschrift/v0.10.2.schrift.3.html) (in include)~~
+  -   ~~Implement network management/player management with a Network object and [CrowCpp](https://crowcpp.org/master/) (in include)~~
 - What we can do right now is:
   - Start the Main menu
   - Use the main menu to render something on the Image object
   - Display the image object with a display driver
+  - Connect to the Crow server and get a HTML page
+  - Connect with websockets and exchange data
  
 Quick note here: The internal image pixels can be accessed by view units, this mean, displaying pixels on a LED display of various density/size become trivial. We can display a 24x86 image on a 546x963 screen the same way we would display this 24x86 on a 24x86 screen, and we could for instance easily display the same image on four screens of 32x64, 98x67, 5420x6320 and 9x10.
 
@@ -58,15 +60,6 @@ class MainMenu {
         bool render(Image* i) override;
         bool update() override;
         bool reset() override;
-
-}
-
-class Player {
-
-        std::string name;
-        std::string id;
-        Player(std::string name, std::string id);
-        std::string getID();
 
 }
 
@@ -152,16 +145,38 @@ class Config {
 }
 
 class Network {
-        crow::App<crow::CORSHandler> _app;
+        crow::SimpleApp _app;
         int _port;
         std::string _url;
-        Network( Config* conf );
+        std::future<void> _crow_thread;
+        reLogger* _logger;
+        std::vector<Player*> _players;
+        MainMenu* _game;
+        int getPlayerIndexByConnection( crow::websocket::connection* c );
+        Network( Config* conf, MainMenu* main );
+        ~Network();
         bool init();
         bool run();
+        bool stop();
+}
+
+class Player {
+        std::string _name;
+        std::string _id;
+        Game* _game;
+        crow::websocket::connection* _connection;
+        Player( crow::websocket::connection* connection );
+        std::string getID();
+        bool setName( std::string );
+        std::string getName();
+        bool updateGame( std::string );
+        bool setGame( Game* g );
+        bool exitGame();
 }
 
 MainMenu --|> Game
-MainMenu "*" *-- "*"  Player
+MainMenu "*" .. "*"  Player
+Network "*" *-- "*" Player
 Pong --|> Game
 Stdout --|> Display
 Sdl --|> Display
