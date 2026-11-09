@@ -1,3 +1,6 @@
+#pragma once
+#include <mutex>
+
 #include "logger.h"
 #include "crow.h"
 #include "crow/app.h"
@@ -46,11 +49,12 @@ class Network {
         int _port;
         std::string _url;
         std::future<void> _crow_thread;
-        reLogger* _logger;
         std::vector<Player*> _players;
         MainMenu* _game;
+        std::mutex _players_mutex;
 
         int getPlayerIndexByConnection( crow::websocket::connection* c );
+        static std::vector<Value> parseRequest( const std::string& data );
 
     public:
 

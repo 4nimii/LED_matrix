@@ -10,18 +10,29 @@ MainMenu::MainMenu( std::vector<Game*> games ) {
 
     this->_current_game = -1;
     this->_games = games;
-
+    /*
     this->_cube = {
         new Vec3(0.5, 0.5, 0.5), new Vec3(0.5, 0.5, -0.5), new Vec3(0.5, -0.5, 0.5), new Vec3(0.5, -0.5, -0.5),
         new Vec3(-0.5, 0.5, 0.5), new Vec3(-0.5, 0.5, -0.5), new Vec3(-0.5, -0.5, 0.5), new Vec3(-0.5, -0.5, -0.5)
     };
 
     this->_camera = new Camera();
+    */
+}
+
+
+MainMenu::~MainMenu() {
+
+    //for ( Vec3* v: this->_cube )
+    //    delete v;
+    //delete this->_camera;
 
 }
 
 
 bool MainMenu::addPlayer( Player* p ) {
+
+    std::lock_guard<std::mutex> lock( this->_mutex );
 
     // The player is already here ?
     if ( _getPlayerIndex( p ) != -1 ) return false;
@@ -64,6 +75,8 @@ int MainMenu::_getPlayerIndex( Player* p ) {
 
 bool MainMenu::removePlayer( Player* p ) {
 
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
     int player_index = _getPlayerIndex( p );
 
     // Player not in game
@@ -88,10 +101,14 @@ bool MainMenu::removePlayer( Player* p ) {
 
 bool MainMenu::updatePlayer( Player* p, std::vector<Value> v) {
 
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
     std::string request = "[ ";
-    for ( Value l: v ) {
-        if ( l.string == nullptr )
-        request += std::to_string(*l.number) + ", ";
+    for ( const Value& l: v ) {
+        if ( l.number )
+            request += std::to_string( *l.number ) + ", ";
+        else if ( l.string )
+            request += "\"" + *l.string + "\", ";
     }
     request += " ]";
     logger( 1, ( "Received request: " + request + " from player with ID: " + p->getID() ).c_str() );
@@ -101,19 +118,20 @@ bool MainMenu::updatePlayer( Player* p, std::vector<Value> v) {
     if ( player_index == -1 ) return false;
 
     // We need at least 2 parameters
-    if ( v.size() >= 2 && v[0].number != nullptr ) {
+    if ( v.size() >= 2 && v[0].number ) {
 
         switch (*v[0].number) {
 
             // Vote
             case 0:
-                if ( v[1].number != nullptr && *v[1].number < this->_games.size() ) {
+                if ( v[1].number && *v[1].number < this->_games.size() ) {
 
                     // Mark the vote for game n in the voted for array
                     this->_voted_for[player_index] = *v[1].number;
                     return true;
 
                 }
+                return false;
 
             // Pass to current game
             case 1:
@@ -121,7 +139,7 @@ bool MainMenu::updatePlayer( Player* p, std::vector<Value> v) {
                     v.erase(v.begin());
                     return this->_games[this->_current_game]->updatePlayer( p, v );
                 }
-
+                return false;
 
         }
 
@@ -169,23 +187,25 @@ int MainMenu::_mostVotedGame() {
 
 bool MainMenu::update() {
 
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
     int next_game = _mostVotedGame();
 
     // We change of game...
     if ( next_game != this->_current_game ) {
 
-        // if the current game is a game and not the main menu (main menu = -1, neutral vote);
+        // if the current game is a game and not the main menu
         if ( this->_current_game >= 0 )
             this->_games[this->_current_game]->reset();
 
         this->_current_game = next_game;
 
-        for ( Player* p: this->_players )
-            this->_games[this->_current_game]->addPlayer( p );
+        if ( this->_current_game >= 0 )
+            for ( Player* p: this->_players )
+                this->_games[this->_current_game]->addPlayer( p );
 
     }
 
-    // update the running game
     if ( this->_current_game >= 0 )
         this->_games[this->_current_game]->update();
 
@@ -203,9 +223,11 @@ bool MainMenu::isRunning() {
 
 bool MainMenu::render( Image* img ) {
 
-    if ( this->_iterations == 0 ) {
-        initCamera( img, this->_camera, 30 );
-    }
+    std::lock_guard<std::mutex> lock( this->_mutex );
+
+    // if ( this->_iterations == 0 ) {
+    //     initCamera( img, this->_camera, 30 );
+    // }
 
     img->clear();
     this->_iterations += 1;
@@ -231,6 +253,8 @@ bool MainMenu::render( Image* img ) {
 
 
 bool MainMenu::reset() {
+
+    std::lock_guard<std::mutex> lock( this->_mutex );
 
     this->_players.clear();
     this->_next_game_vote.clear();

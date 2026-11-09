@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <mutex>
 #include <vector>
 
 #include "Game.hpp"
@@ -21,8 +22,9 @@ class MainMenu: public Game {
         std::vector<int> _voted_for;
         int _current_game;
         uint_fast32_t _iterations = 0;
-        std::vector<Vec3*> _cube;
-        Camera* _camera;
+        // std::vector<Vec3*> _cube;
+        // Camera* _camera;
+        std::mutex _mutex;
 
         /**
          * @fn _getPlayerIndex
@@ -40,6 +42,7 @@ class MainMenu: public Game {
     public:
 
         MainMenu( std::vector<Game*> games );
+        ~MainMenu();
         bool addPlayer( Player* ) override;
         bool removePlayer( Player* ) override;
         bool updatePlayer( Player* , std::vector<Value> ) override;

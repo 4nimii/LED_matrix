@@ -19,15 +19,41 @@ Network::Network( Config* conf, MainMenu* main ) {
 
 int Network::getPlayerIndexByConnection( crow::websocket::connection* c ) {
 
-    std::string id = c->get_remote_ip() + ":" + std::to_string(c->get_remote_port());
     for ( int i = 0; i < this->_players.size(); i++ ) {
 
-        if ( this->_players[i]->getID() == id )
+        if ( this->_players[i]->getConnection() == c )
             return i;
 
     }
 
     return -1;
+
+}
+
+
+std::vector<Value> Network::parseRequest( const std::string& data ) {
+
+    std::vector<Value> request;
+    size_t start = 0;
+
+    while ( true ) {
+
+        size_t pos = data.find( ',', start );
+        std::string token = data.substr( start, pos == std::string::npos ? std::string::npos : pos - start );
+
+        Value v;
+        if ( token.length() == 1 && token[0] >= '0' && token[0] <= '9' )
+            v.number = static_cast<uint8_t>( token[0] - '0' );
+        else
+            v.string = token;
+        request.push_back( v );
+
+        if ( pos == std::string::npos ) break;
+        start = pos + 1;
+
+    }
+
+    return request;
 
 }
 
@@ -52,59 +78,35 @@ bool Network::init() {
         .onopen([&]( crow::websocket::connection& conn ) {
 
             CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
+            std::lock_guard<std::mutex> lock( this->_players_mutex );
             Player* new_p = new Player( &conn );
-            new_p->setGame( this->_game );
             new_p->setName( "Player " + std::to_string(this->_players.size()) );
+            new_p->setGame( this->_game );
             this->_players.push_back( new_p );
 
         })
         .onclose([&]( crow::websocket::connection& conn, const std::string& reason, uint16_t ) {
 
             CROW_LOG_INFO << "websocket connection closed: " << reason;
+            std::lock_guard<std::mutex> lock( this->_players_mutex );
             int p = getPlayerIndexByConnection( &conn );
-            this->_players[p]->exitGame();
+            if ( p == -1 ) return;
+
+            Player* player = this->_players[p];
             this->_players.erase( this->_players.begin() + p );
+            // Removed from the menu (under its lock) before being freed,
+            // so the render loop can no longer reference it.
+            player->exitGame();
+            delete player;
 
         })
         .onmessage([&]( crow::websocket::connection& conn, const std::string& data, bool is_binary ) {
 
-            std::string r = data;
-            std::vector<Value> request;
-            size_t pos = 0;
-            std::string token;
+            std::vector<Value> request = parseRequest( data );
 
-            while ( ( pos = r.find( ',' ) ) != std::string::npos ) {
-
-                token = r.substr( 0, pos );
-                Value v;
-
-                if ( token.length() == 1 && token[0] >= '0' && token[0] <= '9' ) {
-
-                    v.number = new uint8_t( std::stoi( token ) );
-
-                } else {
-
-                    v.string = new std::string( token );
-
-                }
-                request.push_back( v );
-
-                r.erase( 0, pos + 1 );
-
-            }
-            Value v;
-            if ( r.length() == 1 && r[0] >= '0' && r[0] <= '9' ) {
-
-                v.number = new uint8_t(std::stoi( r ));
-
-            } else {
-
-                v.string = new std::string( r );
-
-            }
-            request.push_back( v );
-
+            std::lock_guard<std::mutex> lock( this->_players_mutex );
             int p = getPlayerIndexByConnection( &conn );
+            if ( p == -1 ) return;
             this->_players[p]->updateGame( request );
 
         });
@@ -115,8 +117,8 @@ bool Network::init() {
 
 bool Network::run() {
 
-    this->_logger = new reLogger();
-    crow::logger::setHandler( this->_logger );
+    static reLogger crow_logger;
+    crow::logger::setHandler( &crow_logger );
     this->_crow_thread = this->_app.port( this->_port ).run_async();
     this->_app.signal_clear();
     return true;
@@ -137,5 +139,12 @@ Network::~Network() {
     this->stop();
     if (this->_crow_thread.valid())
         this->_crow_thread.get();
+
+    // Crow is stopped: no more callbacks can touch _players.
+    for ( Player* p: this->_players ) {
+        p->exitGame();
+        delete p;
+    }
+    this->_players.clear();
 
 }

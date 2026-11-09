@@ -234,6 +234,22 @@ You should set the font_path with a valid ttf file to display fonts.
 
 CrowCpp look for static files and template files in `/static` and `/templates` folders, you should place the content of `/www` in `/build` or create a link for Crow to deliver the web pages.
 
+## Communication
+
+The UI and the server communicate via websocket using this format:
+
+- From player to server:
+```
+0,[player name]
+1,0,[Index of the game to vote for]
+1,1,[game commands]
+```
+
+- From server to player:
+```
+0,[controller type]
+```
+
 ## Pong Game
 
 Pong is a simple tennis game, but we want a potentially infinite number of players. Our solution to fix this issue is the following (for 8 players here):

@@ -74,8 +74,12 @@ int main( int argc, char** argv ) {
         // For instance we closed the Window
         if ( !display->display( screen ) || end_program ) {
 
-            delete display;
+            // Server first, it stops Crow and removes players from the menu.
             delete server;
+            delete display;
+            delete menu;
+            delete screen;
+            delete conf;
             return 0;
 
         }
