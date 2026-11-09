@@ -191,6 +191,12 @@ bool Image::drawText( std::string text, float vw, float vh, float weight, float 
 
     }
 
+    if ( text.size() <= 0 ) {
+
+        return false;
+
+    }
+
     int pixel_x = ( int )( vw / this->_view_unit_x );
     int pixel_y = ( int )( vh / this->_view_unit_y );
     int pixel_size_x = ( int )( weight / this->_view_unit_x );

@@ -46,7 +46,7 @@ class Player {
          * @fn updateGame
          * @brief Pass player request to the current game.
          */
-        bool updateGame( std::string );
+        bool updateGame( std::vector<Value> );
 
         /**
          * @fn setGame

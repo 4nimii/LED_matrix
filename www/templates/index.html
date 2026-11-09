@@ -1,42 +1,77 @@
 <!doctype html>
 <html>
-<head>
-    <script src="https://{{servername}}/static/jquery-3.1.0.min.js"></script>
-</head>
-<body>
-    <input id="msg" type="text"></input>
-    <button id="send">
-        Send
-    </button><BR>
-    <textarea id="log" cols=100 rows=50>
-    </textarea>
-    <script>
-var sock = new WebSocket("ws://{{servername}}:{{port}}/ws");
 
-sock.onopen = ()=>{
-    console.log('open')
-}
-sock.onerror = (e)=>{
-    console.log('error',e)
-}
-sock.onclose = (e)=>{
-    console.log('close', e)
-}
-sock.onmessage = (e)=>{
-    $("#log").val(
-            e.data +"\n" + $("#log").val());
-}
-$("#msg").keypress(function(e){
-    if (e.which == 13)
-    {
-    sock.send($("#msg").val());
-    $("#msg").val("");
-    }
-});
-$("#send").click(()=>{
-    sock.send($("#msg").val());
-    $("#msg").val("");
-});
-    </script>
-</body>
+    <head>
+
+        <script src="http://{{servername}}:{{port}}/static/jquery-3.1.0.min.js"></script>
+
+    </head>
+
+    <body>
+
+        <div id="app">
+
+            <div id="error"></div>
+
+
+        </div>
+
+        <script>
+
+            var sock = new WebSocket("ws://{{servername}}:{{port}}/ws");
+            var name = "";
+
+            function setName(new_name) {
+
+                let valid_char = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789+-._!&?",
+                name = new_name;
+                sock.send("0," + new_name);
+
+            }
+
+            function processNameForm() {
+
+                let n = $("#playerName").val();
+                setName(n);
+
+            }
+
+            function nameForm() {
+
+                return `<div id=\"nameForm\">
+                            <input id=\"playerName\" type=\"text\" value=\"${name}\" \\>
+                            <button onclick=\"processNameForm()\">Send!</button>
+                        </div>`;
+
+            }
+
+            sock.onopen = ()=>{
+                console.log('open')
+            }
+            sock.onerror = (e)=>{
+                console.log('error',e)
+            }
+            sock.onclose = (e)=>{
+                console.log('close', e)
+            }
+            sock.onmessage = (e)=>{
+
+                if ( e[0] == "0" ) {
+
+                    name = e;
+
+                }
+
+            }
+
+            $(document).ready(function(){
+
+                $("#app").append(nameForm());
+
+            });
+
+        </script>
+
+    </body>
+
 </html>

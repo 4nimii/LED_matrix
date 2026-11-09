@@ -42,7 +42,7 @@ class MainMenu: public Game {
         MainMenu( std::vector<Game*> games );
         bool addPlayer( Player* ) override;
         bool removePlayer( Player* ) override;
-        bool updatePlayer( Player* , std::vector<int> ) override;
+        bool updatePlayer( Player* , std::vector<Value> ) override;
         bool isRunning() override;
         bool render( Image* i) override;
         bool update() override;

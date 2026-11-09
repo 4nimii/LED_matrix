@@ -1,6 +1,6 @@
 matrix_x_size=256
 matrix_y_size=256
-font_path=assets/EBGaramond-Regular.ttf
+font_path=
 driver=sdl
 sdl_x_size=512
 sdl_y_size=512

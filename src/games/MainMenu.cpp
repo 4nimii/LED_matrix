@@ -86,11 +86,12 @@ bool MainMenu::removePlayer( Player* p ) {
 }
 
 
-bool MainMenu::updatePlayer( Player* p, std::vector<int> v) {
+bool MainMenu::updatePlayer( Player* p, std::vector<Value> v) {
 
     std::string request = "[ ";
-    for ( int l: v ) {
-        request += std::to_string(l) + ", ";
+    for ( Value l: v ) {
+        if ( l.string == nullptr )
+        request += std::to_string(*l.number) + ", ";
     }
     request += " ]";
     logger( 1, ( "Received request: " + request + " from player with ID: " + p->getID() ).c_str() );
@@ -100,24 +101,27 @@ bool MainMenu::updatePlayer( Player* p, std::vector<int> v) {
     if ( player_index == -1 ) return false;
 
     // We need at least 2 parameters
-    if ( v.size() >= 2 ) {
+    if ( v.size() >= 2 && v[0].number != nullptr ) {
 
-        switch (v[0]) {
+        switch (*v[0].number) {
 
             // Vote
             case 0:
-                if ( v[1] < this->_games.size() ) {
+                if ( v[1].number != nullptr && *v[1].number < this->_games.size() ) {
 
                     // Mark the vote for game n in the voted for array
-                    this->_voted_for[player_index] = v[1];
+                    this->_voted_for[player_index] = *v[1].number;
                     return true;
 
                 }
 
             // Pass to current game
             case 1:
-                if ( this->_current_game >= 0 )
+                if ( this->_current_game >= 0 ) {
+                    v.erase(v.begin());
                     return this->_games[this->_current_game]->updatePlayer( p, v );
+                }
+
 
         }
 
@@ -197,86 +201,27 @@ bool MainMenu::isRunning() {
 }
 
 
-bool MainMenu::render( Image* i ) {
+bool MainMenu::render( Image* img ) {
 
     if ( this->_iterations == 0 ) {
-        initCamera( i, this->_camera, 30 );
+        initCamera( img, this->_camera, 30 );
     }
 
-    i->clear();
+    img->clear();
     this->_iterations += 1;
 
     if ( this->_current_game >= 0 )
-        this->_games[this->_current_game]->render( i );
+        this->_games[this->_current_game]->render( img );
 
     else {
 
-        i->setDrawingColor( rgb( 227, 181, 219 ) );
-        i->drawRect( 0., 0., 1., 1. );
-        i->setDrawingColor( rgb( 36, 31, 35 ) );
-        i->drawText( "F", 0.05, -0.1, 0.9, 0.9 );
+        float height = 1./this->_players.size();
+        for ( int i = 0; i < this->_players.size(); i++ ) {
 
-        std::string text = "^Animii^";
-        uint8_t ind = 0;
+            img->drawText( this->_players[i]->getName(), 0., height * i, 1., height);
 
-        const int CYCLE_DURATION = 360;
-        const int PHASE_DURATION = 120;
-        int phase = (this->_iterations % CYCLE_DURATION) / PHASE_DURATION;
-        float phase_progress = (float)((this->_iterations % CYCLE_DURATION) % PHASE_DURATION) / PHASE_DURATION;
-
-        float letter_width = 0.08;
-        int num_letters = text.length();
-        float total_width = num_letters * letter_width;
-        float start_x_base = (1.0 - total_width) / 2.0;
-
-        for ( Vec3* v: this->_cube ) {
-
-            // Vertex relative to cube's local origin (0,0,0)
-            Vec3* local_vertex = v;
-
-            // Apply rotations in local space
-            rotationX( v, 2. );
-            rotationY( v, 5. );
-            rotationZ( v, 1. );
-
-            // Transform to world space
-            Vec3 world_vertex = Vec3(
-                local_vertex->x + 0,
-                local_vertex->y + 0,
-                local_vertex->z + 10
-            );
-
-            Vec2 p = translate2D( &world_vertex, this->_camera );
-
-            i->setDrawingColor( rgb( 173, 90, 178 ) );
-            i->drawCircle( p.x + 0.7, p.y + 0.2, 0.02 );
-
-            float start_x = start_x_base + ind * letter_width;
-            float start_y = 0.8;
-
-            float target_x = p.x + 0.7;
-            float target_y = p.y + 0.6;
-
-            float text_x = target_x;
-            float text_y = target_y;
-
-            if ( phase == 0 ) {
-                text_x = start_x + (target_x - start_x) * phase_progress;
-                text_y = start_y + (target_y - start_y) * phase_progress;
-            }
-            else if ( phase == 1 ) {
-                text_x = target_x;
-                text_y = target_y;
-            }
-            else if ( phase == 2 ) {
-                text_x = target_x + (start_x - target_x) * phase_progress;
-                text_y = target_y + (start_y - target_y) * phase_progress;
-            }
-
-            i->setDrawingColor( rgb( 66, 12, 53 ) );
-            i->drawText( std::string(1, text.at(ind)), text_x, text_y, 0.1, 0.1 );
-            ind++;
         }
+
     }
 
     return true;
