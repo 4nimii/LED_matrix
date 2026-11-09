@@ -1,12 +1,16 @@
-
-#include "Player.hpp"
+#include <cstdint>
 #include <string>
 #include <vector>
+
+#include "Player.hpp"
+#include "../utils/request.hpp"
+#include "logger.h"
 
 
 Player::Player( crow::websocket::connection* connection ) {
 
     this->_connection = connection;
+    this->_name = "";
 
 }
 
@@ -32,19 +36,24 @@ std::string Player::getName() {
 }
 
 
-bool Player::updateGame( std::string r ) {
+bool Player::updateGame( std::vector<Value> request ) {
 
-    std::vector<int> request;
-    size_t pos = 0;
-    std::string token;
+    if ( request[0].number != nullptr && *request[0].number == 0 ) {
 
-    while ( ( pos = r.find( ',' ) ) != std::string::npos ) {
-        token = r.substr( 0, pos );
-        request.push_back( std::stoi( token ) );
-        r.erase( 0, pos + 1 );
+
+        if ( request[1].string != nullptr ) {
+
+            return this->setName( *(request[1].string) );
+
+        } else {
+
+            return false;
+
+        }
+
     }
-    request.push_back( std::stoi( token ) );
 
+    request.erase(request.begin());
     return this->_game->updatePlayer( this, request );
 
 }

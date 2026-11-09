@@ -54,6 +54,7 @@ bool Network::init() {
             CROW_LOG_INFO << "new websocket connection from " << conn.get_remote_ip();
             Player* new_p = new Player( &conn );
             new_p->setGame( this->_game );
+            new_p->setName( "Player " + std::to_string(this->_players.size()) );
             this->_players.push_back( new_p );
 
         })
@@ -67,8 +68,44 @@ bool Network::init() {
         })
         .onmessage([&]( crow::websocket::connection& conn, const std::string& data, bool is_binary ) {
 
+            std::string r = data;
+            std::vector<Value> request;
+            size_t pos = 0;
+            std::string token;
+
+            while ( ( pos = r.find( ',' ) ) != std::string::npos ) {
+
+                token = r.substr( 0, pos );
+                Value v;
+
+                if ( token.length() == 1 && token[0] >= '0' && token[0] <= '9' ) {
+
+                    v.number = new uint8_t( std::stoi( token ) );
+
+                } else {
+
+                    v.string = new std::string( token );
+
+                }
+                request.push_back( v );
+
+                r.erase( 0, pos + 1 );
+
+            }
+            Value v;
+            if ( r.length() == 1 && r[0] >= '0' && r[0] <= '9' ) {
+
+                v.number = new uint8_t(std::stoi( r ));
+
+            } else {
+
+                v.string = new std::string( r );
+
+            }
+            request.push_back( v );
+
             int p = getPlayerIndexByConnection( &conn );
-            this->_players[p]->updateGame(data);
+            this->_players[p]->updateGame( request );
 
         });
 

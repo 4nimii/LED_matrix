@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "../display/Image.hpp"
+#include "../utils/request.hpp"
 
 
 class Player;
@@ -35,7 +36,7 @@ class Game {
          * @param Player* The player who is making the request.
          * @param std::vector<int> The data sent by the player.
          */
-        virtual bool updatePlayer( Player* , std::vector<int> ) = 0;
+        virtual bool updatePlayer( Player* , std::vector<Value> ) = 0;
 
         /**
          * @fn isRunning
