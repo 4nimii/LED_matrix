@@ -12,7 +12,7 @@ Currently we have:
   - A main menu to manage each games
 - What we need is:
   1. **Add display driver for our LED display**
-  2. **Make an actual game and add it to the main menu**
+  2. **Make an actual game and add it to the main menu. You SHOULD read that before doing anything -> [How to add a game ?](doc/how_to_add_a_game.md).**
   - Add a relay mode and a relay to forward player requests from a distant server to our Pi
   - *Multi-threaded draw calls ?? Basically anything to speed up the rendering process which is fairly slow as we run on 1 CPU core, calling the SDL renderer twice for each pixel might also be a big bottle-neck.*
   - ~~Currently the program crash when we close it as we do not end the CrowCpp thread correctly when we close the main loop. I don't think there is a correct solution, but who knows ¯\_(ツ)_/¯.~~
